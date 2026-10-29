@@ -224,6 +224,18 @@
   .sim-tbl th:nth-child(8),.sim-tbl td:nth-child(8){text-align:center}
   .sim-tbl td.b{color:var(--txt)}
   .sim-right{max-height:214px;overflow-y:auto}
+
+  /* ---------- 庄家 ---------- */
+  .house-bar{display:flex;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.055);
+    padding:10px 16px 12px;gap:0 6px}
+  .house-bar .hb{flex:1 1 0;min-width:112px;padding-right:12px}
+  .house-bar .hb span{display:block;font-size:10px;color:var(--dim2);margin-bottom:2px;white-space:nowrap}
+  .house-bar .hb b{font-size:13px;font-variant-numeric:tabular-nums;letter-spacing:-.2px;color:var(--txt)}
+  .house-bar .hb b.pos{color:var(--down)}
+  .house-bar .hb b.neg{color:var(--up)}
+  .house-bar .hb.note{flex:2 1 250px;font-size:10px;color:var(--dim2);line-height:1.55;
+    padding-top:13px;min-width:200px}
+  .sim-quote .sk{font-style:normal;color:var(--gold);font-size:9.5px;margin-left:3px;font-weight:400}
   .h-body{max-height:196px;overflow-y:auto}
   .h-body::-webkit-scrollbar{width:8px}
   .h-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:4px}
@@ -442,6 +454,14 @@
         </table>
         <div class="empty" id="simEmpty" data-i18n="sim.empty">还没有下注。选个金额，点买涨或买跌。</div>
       </div>
+    </div>
+
+    <div class="house-bar">
+      <div class="hb"><span data-i18n="house.spread">庄家价差收入</span><b id="hSpread">+0.00</b></div>
+      <div class="hb"><span data-i18n="house.real">庄家实际盈亏</span><b id="hReal">+0.00</b></div>
+      <div class="hb"><span data-i18n="house.inv">库存敞口</span><b id="hInv">0</b></div>
+      <div class="hb"><span data-i18n="house.acc">你的方向命中率</span><b id="hAcc">--</b></div>
+      <div class="hb note" id="hNote"></div>
     </div>
   </section>
 
@@ -718,7 +738,14 @@ const DICT = {
   'sim.pending':    ['待结算', 'Open', '未確定', '대기', 'Открыто'],
   'sim.win':        ['赢', 'Win', '勝ち', '승', 'Выигрыш'],
   'sim.lose':       ['输', 'Lose', '負け', '패', 'Проигрыш'],
-  'sim.void':       ['退回', 'Void', '返却', '반환', 'Возврат']
+  'sim.void':       ['退回', 'Void', '返却', '반환', 'Возврат'],
+  'house.spread':   ['庄家价差收入', 'House spread income', 'ハウス スプレッド収入', '하우스 스프레드 수익', 'Доход спреда'],
+  'house.real':     ['庄家实际盈亏', 'House realized P&L', 'ハウス実現損益', '하우스 실현 손익', 'Фактический P&L'],
+  'house.inv':      ['库存敞口', 'Inventory exposure', '在庫エクスポージャー', '재고 노출', 'Экспозиция запаса'],
+  'house.acc':      ['你的方向命中率', 'Your hit rate', 'あなたの的中率', '내 적중률', 'Ваша точность'],
+  'house.shares':   ['份', 'sh', '枚', '주', 'долей'],
+  'house.turnover': ['流水', 'turnover', '出来高', '거래대금', 'оборот'],
+  'house.note':     ['庄家不赌方向，只赚 {0}% 价差；实际盈亏取决于你的命中率', 'The house does not bet on direction — it takes the {0}% spread; its real P&L depends on your hit rate', 'ハウスは方向を賭けず {0}% のスプレッドを取ります。実際の損益はあなたの的中率次第です', '하우스는 방향에 베팅하지 않고 {0}% 스프레드를 가져갑니다. 실제 손익은 내 적중률에 달려 있습니다', 'Дом не ставит на направление, а берёт {0}% спреда; фактический P&L зависит от вашей точности']
 };
 
 function t(key) {
@@ -1384,9 +1411,53 @@ const SIM = {
   spread: 0.02,       // 买卖总价差（每边各付一半）
   amt: 500,           // 当前选中的下注金额
   balance: 10000,
-  mid: null,          // 市场中间价
+  mid: null,          // 市场中间价（不含库存偏移）
   bets: []
 };
+
+/* 库存偏移系数：每净空 1 份 UP，中间价上移这么多。
+   500 USDT 在 0.5 附近约合 1000 份，也就是一笔下注推动 0.4 个百分点。 */
+const SKEW_K = 0.000004;
+const SKEW_MAX = 0.06;
+
+/* ---------- 庄家账本 ----------
+ * 庄家永远是散户的对手盘。它不预测方向，只赚「买入价 − 公允价」这个差额。
+ * 全部指标都能从下注记录直接推出来，不需要额外存状态。
+ */
+function houseState() {
+  let spread = 0;      // 价差收入（期望收益）
+  let realized = 0;    // 已实现盈亏
+  let openExp = 0;     // 未结算的期望赔付（风险敞口）
+  let shortUp = 0, shortDown = 0;
+  let settledN = 0, wins = 0, turnover = 0;
+
+  for (const b of SIM.bets) {
+    const fairSide = b.dir === 'up' ? b.fair : 1 - b.fair;
+    spread += b.cost - b.shares * fairSide;
+    turnover += b.cost;
+    if (b.settled) {
+      const payout = b.win === true ? b.shares : (b.win === null ? b.cost : 0);
+      realized += b.cost - payout;
+      if (b.win !== null) { settledN++; if (b.win) wins++; }
+    } else {
+      openExp += b.shares * fairSide;
+      if (b.dir === 'up') shortUp += b.shares; else shortDown += b.shares;
+    }
+  }
+
+  return {
+    spread: spread,
+    realized: realized,
+    openExp: openExp,
+    shortUp: shortUp,
+    shortDown: shortDown,
+    netUp: shortUp - shortDown,     // >0 表示庄家净空 UP（= 净多 DOWN）
+    acc: settledN ? wins / settledN : null,
+    settledN: settledN,
+    n: SIM.bets.length,
+    turnover: turnover
+  };
+}
 
 /* 公允概率：结算价 > 基准价 的概率 */
 function simFair() {
@@ -1415,12 +1486,21 @@ function simStep() {
 function simQuote() {
   const fair = simFair();
   if (fair == null || SIM.mid == null) return null;
+
+  /* 库存偏移：庄家净空 UP 越多，说明散户在买涨，它就把 UP 报价抬高、
+     DOWN 报价压低，引导反向成交来对冲自己的敞口 */
+  const hs = houseState();
+  const skew = clamp(hs.netUp * SKEW_K, -SKEW_MAX, SKEW_MAX);
+  const mid = clamp(SIM.mid + skew, 0.02, 0.98);
+
   const half = SIM.spread / 2;
   return {
     fair: fair,
-    mid: SIM.mid,
-    up: clamp(SIM.mid + half, 0.01, 0.99),
-    down: clamp(1 - SIM.mid + half, 0.01, 0.99)
+    mid: mid,
+    base: SIM.mid,
+    skew: skew,
+    up: clamp(mid + half, 0.01, 0.99),
+    down: clamp(1 - mid + half, 0.01, 0.99)
   };
 }
 
@@ -1532,7 +1612,10 @@ function simRenderQuote() {
   box.innerHTML =
     '<div class="r"><span>' + t('sim.settleAt') + '</span><b>' + hhmm(st.t) + ' · ' + leftTxt + '</b></div>'
     + '<div class="r"><span>' + t('sim.fair') + '</span><b>' + (q.fair * 100).toFixed(1) + '%</b></div>'
-    + '<div class="r"><span>' + t('sim.mkt') + '</span><b>' + (q.mid * 100).toFixed(1) + '%</b></div>'
+    + '<div class="r"><span>' + t('sim.mkt') + '</span><b>' + (q.mid * 100).toFixed(1) + '%'
+    + (Math.abs(q.skew) > 0.002
+      ? '<i class="sk">' + (q.skew > 0 ? '+' : '') + (q.skew * 100).toFixed(1) + 'pt</i>' : '')
+    + '</b></div>'
     + '<div class="r"><span>' + t('sim.buyUp') + ' ' + q.up.toFixed(3) + ' · ' + (1 / q.up).toFixed(2) + 'x</span>'
     + '<b class="' + cls(evUp) + '">' + sgn(evUp) + '</b></div>'
     + '<div class="r"><span>' + t('sim.buyDown') + ' ' + q.down.toFixed(3) + ' · ' + (1 / q.down).toFixed(2) + 'x</span>'
@@ -1542,9 +1625,34 @@ function simRenderQuote() {
   $('#simDown').querySelector('i').textContent = q.down.toFixed(3) + ' · ' + (1 / q.down).toFixed(2) + 'x';
 }
 
+/* 渲染：庄家账本 */
+function houseRender() {
+  const se = $('#hSpread');
+  if (!se) return;
+  const hs = houseState();
+
+  se.textContent = (hs.spread >= 0 ? '+' : '') + hs.spread.toFixed(2);
+  se.className = hs.spread > 0 ? 'pos' : hs.spread < 0 ? 'neg' : '';
+
+  const re = $('#hReal');
+  re.textContent = (hs.realized >= 0 ? '+' : '') + hs.realized.toFixed(2);
+  re.className = hs.realized > 0 ? 'pos' : hs.realized < 0 ? 'neg' : '';
+
+  $('#hInv').textContent = (hs.netUp >= 0 ? '+' : '') + Math.round(hs.netUp)
+    + ' ' + t('house.shares');
+
+  const ae = $('#hAcc');
+  ae.textContent = hs.acc == null ? '--' : (hs.acc * 100).toFixed(1) + '% · ' + hs.settledN;
+  ae.className = hs.acc == null ? '' : hs.acc > 0.5 ? 'pos' : 'neg';
+
+  $('#hNote').textContent = t('house.note', (SIM.spread * 100).toFixed(1))
+    + (hs.n ? '　' + t('house.turnover') + ' ' + hs.turnover.toFixed(0) : '');
+}
+
 /* 渲染：账户 + 记录 */
 function simRender() {
   simRenderQuote();
+  houseRender();
 
   let pnl = 0, open = 0;
   for (const b of SIM.bets) {
