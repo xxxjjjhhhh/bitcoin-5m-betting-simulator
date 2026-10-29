@@ -236,6 +236,35 @@
   .house-bar .hb.note{flex:2 1 250px;font-size:10px;color:var(--dim2);line-height:1.55;
     padding-top:13px;min-width:200px}
   .sim-quote .sk{font-style:normal;color:var(--gold);font-size:9.5px;margin-left:3px;font-weight:400}
+
+  /* ---------- 庄家模拟器 ---------- */
+  .bot-card{padding-bottom:0}
+  .bot-body{display:grid;grid-template-columns:270px minmax(0,1fr);gap:18px;padding:13px 16px 14px}
+  .bot-left{display:flex;flex-direction:column;gap:11px}
+  .bot-ctl .k{display:flex;justify-content:space-between;align-items:baseline;
+    font-size:10.5px;color:var(--dim2);margin-bottom:5px}
+  .bot-ctl .k em{font-style:normal}
+  .bot-ctl .k b{color:var(--gold);font-size:11px;font-variant-numeric:tabular-nums}
+  .bot-ctl input[type=range]{width:100%;height:3px;border-radius:2px;background:rgba(255,255,255,.12);
+    -webkit-appearance:none;appearance:none;outline:none;cursor:pointer}
+  .bot-ctl input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;
+    border-radius:50%;background:var(--gold);cursor:pointer;border:0}
+  .bot-ctl input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;
+    background:var(--gold);cursor:pointer;border:0}
+  .bot-hint{font-size:10px;color:var(--dim2);line-height:1.6;min-height:32px;margin-top:2px}
+  .bot-kpi{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-bottom:9px}
+  .bot-kpi div{background:var(--panel-2);border-radius:9px;padding:7px 9px;min-width:0}
+  .bot-kpi span{display:block;font-size:10px;color:var(--dim2);margin-bottom:2px;white-space:nowrap}
+  .bot-kpi b{font-size:13px;font-variant-numeric:tabular-nums;letter-spacing:-.2px}
+  .bot-kpi b.pos{color:var(--down)}
+  .bot-kpi b.neg{color:var(--up)}
+  .bot-sub{font-size:10.5px;color:var(--dim2);margin-bottom:8px;line-height:1.6}
+  .bot-tbl{width:100%;border-collapse:collapse;font-size:11.5px;table-layout:fixed}
+  .bot-tbl th{text-align:left;font-weight:500;color:var(--dim2);font-size:10px;padding:0 10px 6px}
+  .bot-tbl td{padding:4.5px 10px;border-top:1px solid rgba(255,255,255,.045);white-space:nowrap;
+    font-variant-numeric:tabular-nums;color:var(--dim)}
+  .bot-tbl th:nth-child(n+2),.bot-tbl td:nth-child(n+2){text-align:right}
+  .bot-right{max-height:250px;overflow-y:auto}
   .h-body{max-height:196px;overflow-y:auto}
   .h-body::-webkit-scrollbar{width:8px}
   .h-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:4px}
@@ -462,6 +491,66 @@
       <div class="hb"><span data-i18n="house.inv">库存敞口</span><b id="hInv">0</b></div>
       <div class="hb"><span data-i18n="house.acc">你的方向命中率</span><b id="hAcc">--</b></div>
       <div class="hb note" id="hNote"></div>
+    </div>
+  </section>
+
+  <!-- 庄家模拟器 -->
+  <section class="card bot-card">
+    <div class="card-head">
+      <h2 data-i18n="bot.title">庄家模拟器</h2>
+      <div class="legend"><span data-i18n="bot.note">你当庄家，一群散户每局下注；调参数看谁先撑不住</span></div>
+    </div>
+    <div class="bot-body">
+      <div class="bot-left">
+        <div class="bot-ctl">
+          <span class="k" data-i18n="bot.n">玩家数</span>
+          <div class="seg" id="botN">
+            <button data-n="10">10</button>
+            <button data-n="50" class="on">50</button>
+            <button data-n="100">100</button>
+          </div>
+        </div>
+
+        <div class="bot-ctl">
+          <span class="k"><em data-i18n="bot.spread">价差</em> <b id="botSpreadV">2.0%</b></span>
+          <input type="range" id="botSpread" min="0.5" max="10" step="0.5" value="2">
+        </div>
+
+        <div class="bot-ctl">
+          <span class="k"><em data-i18n="bot.rebate">返水</em> <b id="botRebateV">20%</b></span>
+          <input type="range" id="botRebate" min="0" max="80" step="5" value="20">
+        </div>
+
+        <div class="bot-ctl">
+          <span class="k"><em data-i18n="bot.rig">暗箱偏移</em> <b id="botRigV">0.0pt</b></span>
+          <input type="range" id="botRig" min="-10" max="10" step="0.5" value="0">
+        </div>
+
+        <div class="bot-hint" id="botHint"></div>
+      </div>
+
+      <div class="bot-right">
+        <div class="bot-kpi">
+          <div><span data-i18n="bot.kJoin">本局参与</span><b id="bkJoin">0</b></div>
+          <div><span data-i18n="bot.kStake">本局下注</span><b id="bkStake">0</b></div>
+          <div><span data-i18n="bot.kHouse">本局庄家</span><b id="bkHouse">0</b></div>
+          <div><span data-i18n="bot.kRounds">累计局数</span><b id="bkRounds">0</b></div>
+          <div><span data-i18n="bot.kTurn">累计流水</span><b id="bkTurn">0</b></div>
+          <div><span data-i18n="bot.kTotal">累计庄家</span><b id="bkTotal">0</b></div>
+        </div>
+        <div class="bot-sub" id="botSub">--</div>
+
+        <table class="bot-tbl">
+          <thead><tr>
+            <th data-i18n="bot.c.time">时间</th>
+            <th data-i18n="bot.c.players">人数</th>
+            <th data-i18n="bot.c.stake">下注</th>
+            <th data-i18n="bot.c.house">庄家盈亏</th>
+            <th data-i18n="bot.c.mood">情绪</th>
+          </tr></thead>
+          <tbody id="botBody"></tbody>
+        </table>
+      </div>
     </div>
   </section>
 
@@ -745,7 +834,25 @@ const DICT = {
   'house.acc':      ['你的方向命中率', 'Your hit rate', 'あなたの的中率', '내 적중률', 'Ваша точность'],
   'house.shares':   ['份', 'sh', '枚', '주', 'долей'],
   'house.turnover': ['流水', 'turnover', '出来高', '거래대금', 'оборот'],
-  'house.note':     ['庄家不赌方向，只赚 {0}% 价差；实际盈亏取决于你的命中率', 'The house does not bet on direction — it takes the {0}% spread; its real P&L depends on your hit rate', 'ハウスは方向を賭けず {0}% のスプレッドを取ります。実際の損益はあなたの的中率次第です', '하우스는 방향에 베팅하지 않고 {0}% 스프레드를 가져갑니다. 실제 손익은 내 적중률에 달려 있습니다', 'Дом не ставит на направление, а берёт {0}% спреда; фактический P&L зависит от вашей точности']
+  'house.note':     ['庄家不赌方向，只赚 {0}% 价差；实际盈亏取决于你的命中率', 'The house does not bet on direction — it takes the {0}% spread; its real P&L depends on your hit rate', 'ハウスは方向を賭けず {0}% のスプレッドを取ります。実際の損益はあなたの的中率次第です', '하우스는 방향에 베팅하지 않고 {0}% 스프레드를 가져갑니다. 실제 손익은 내 적중률에 달려 있습니다', 'Дом не ставит на направление, а берёт {0}% спреда; фактический P&L зависит от вашей точности'],
+  'bot.title':      ['庄家模拟器', 'House simulator', 'ハウス・シミュレーター', '하우스 시뮬레이터', 'Симулятор дома'],
+  'bot.note':       ['你当庄家，一群散户每局下注；调参数看谁先撑不住', 'You are the house; a crowd of retail players bets each round', 'あなたがハウス。毎ラウンド大勢の個人が賭けます', '당신이 하우스입니다. 매 라운드 다수의 개인이 베팅합니다', 'Вы — дом. Толпа игроков ставит каждый раунд'],
+  'bot.n':          ['玩家数', 'Players', 'プレイヤー数', '플레이어 수', 'Игроков'],
+  'bot.spread':     ['价差', 'Spread', 'スプレッド', '스프레드', 'Спред'],
+  'bot.rebate':     ['返水', 'Rebate', '還元', '환급', 'Рейбек'],
+  'bot.rig':        ['暗箱偏移', 'Hidden skew', '裏オフセット', '은밀한 오프셋', 'Скрытый сдвиг'],
+  'bot.kJoin':      ['本局参与', 'Players', '参加者', '참가자', 'Участники'],
+  'bot.kStake':     ['本局下注', 'Staked', '賭け金', '베팅액', 'Ставки'],
+  'bot.kHouse':     ['本局庄家', 'House P&L', 'ハウス損益', '하우스 손익', 'P&L дома'],
+  'bot.kRounds':    ['累计局数', 'Rounds', 'ラウンド', '라운드', 'Раунды'],
+  'bot.kTurn':      ['累计流水', 'Turnover', '累計出来高', '누적 거래액', 'Оборот'],
+  'bot.kTotal':     ['累计庄家', 'Total P&L', '累計損益', '누적 손익', 'Итог P&L'],
+  'bot.c.time':     ['时间', 'Time', '時刻', '시간', 'Время'],
+  'bot.c.players':  ['人数', 'Players', '人数', '인원', 'Игроки'],
+  'bot.c.stake':    ['下注', 'Staked', '賭け金', '베팅액', 'Ставки'],
+  'bot.c.house':    ['庄家盈亏', 'House', 'ハウス', '하우스', 'Дом'],
+  'bot.c.mood':     ['情绪', 'Mood', 'ムード', '심리', 'Настрой'],
+  'bot.sub':        ['存活 {0}/{1} 人 · 平均情绪 {2} · 累计期望 {3} · 实际 {4}', 'Alive {0}/{1} · avg mood {2} · expected {3} · actual {4}', '生存 {0}/{1} · 平均ムード {2} · 期待 {3} · 実際 {4}', '생존 {0}/{1} · 평균 심리 {2} · 기대 {3} · 실제 {4}', 'Живых {0}/{1} · настрой {2} · ожидание {3} · факт {4}'],
 };
 
 function t(key) {
@@ -1229,6 +1336,7 @@ function setBucketMin(m) {
   BUCKET_MS = m * 60000;
   bk = null;
   SIM.mid = null;
+  BOTS.round = null;
   document.querySelectorAll('#blenSeg button').forEach(function (b) {
     b.classList.toggle('on', +b.dataset.b === m);
   });
@@ -1704,11 +1812,242 @@ function simRender() {
 }
 
 /* =========================================================
+ *  庄家模拟器：一群散户每局下注，你当庄家
+ *
+ *  玩家行为依据（行为金融学中已被反复验证的三条）：
+ *    1. 赌徒谬误 / 负近因偏差
+ *       连续出现同一结果后，人会倾向押反向。
+ *       （Clotfelter & Cook 1993 彩票；Terrell 1994 赛马；Suetens 等 2016 硬币实验）
+ *    2. 热手谬误
+ *       同一批人也会在连胜后认为「手气正旺」继续押同向。
+ *       这两者在同一人群里并存，是文献里的共识。
+ *    3. 追涨杀跌 / 过度交易
+ *       散户会外推近期收益、频繁交易（Barber & Odean 2000）
+ *
+ *  人群配比是建模选择，不是实测数据：追涨型 55%、赌徒谬误型 30%、随机 15%。
+ *  亏损后加大注码（loss chasing）也是文献里稳定的现象。
+ * ======================================================= */
+const BOTS = {
+  n: 50,
+  spread: 0.02,     // 价差（庄家抽水）
+  rebate: 0.20,     // 返水：把庄家盈利的多少还给玩家
+  rig: 0,           // 暗箱偏移：给玩家看的概率被人为抬高/压低多少
+  list: [],
+  round: null,
+  log: [],
+  rounds: 0,
+  turnover: 0,
+  housePnl: 0,
+  expPnl: 0      // 按价差算出来的期望收益，用来和实际对比
+};
+
+function makeBot(i) {
+  const r = Math.random();
+  return {
+    id: i,
+    style: r < 0.55 ? 'trend' : r < 0.85 ? 'fade' : 'noise',
+    aggr: 0.5 + Math.random(),           // 注码倍数
+    mood: 0.85 + Math.random() * 0.3,    // 情绪：决定还来不来
+    balance: 200 + Math.random() * 800,  // 本金
+    pnl: 0, bets: 0, wins: 0, lossStreak: 0
+  };
+}
+
+function botsInit() {
+  BOTS.list = [];
+  for (let i = 0; i < BOTS.n; i++) BOTS.list.push(makeBot(i));
+  BOTS.round = null;
+  BOTS.log = [];
+  BOTS.rounds = 0;
+  BOTS.turnover = 0;
+  BOTS.housePnl = 0;
+  BOTS.expPnl = 0;
+  botRender();
+}
+
+/* 最近连涨 / 连跌的强度，供行为模型使用 */
+function recentStreak() {
+  const cs = S.candles;
+  if (cs.length < 3) return { dir: 0, len: 0 };
+  let dir = 0, len = 0;
+  for (let i = cs.length - 1; i > 0; i--) {
+    const d = cs[i].c > cs[i - 1].c ? 1 : cs[i].c < cs[i - 1].c ? -1 : 0;
+    if (d === 0) break;
+    if (dir === 0) { dir = d; len = 1; }
+    else if (d === dir) len++;
+    else break;
+  }
+  return { dir: dir, len: Math.min(len, 6) };
+}
+
+/* 单个玩家押「涨」的概率 */
+function botPUp(b, streak, shown) {
+  /* 基准：玩家会向平台显示的概率靠拢（显示看涨，就更多人去买涨） */
+  let p = 0.5 + (shown - 0.5) * 0.55;
+  const s = streak.dir * streak.len;
+  if (b.style === 'trend') p += 0.032 * s;        // 追涨：连涨后更看涨
+  else if (b.style === 'fade') p -= 0.042 * s;    // 赌徒谬误：连涨后押跌
+  p += (Math.random() - 0.5) * 0.11;              // 个体噪声
+  return clamp(p, 0.04, 0.96);
+}
+
+/* 开一局：所有玩家决定是否参与、押哪边、押多少 */
+function botRoundOpen(p0, fair) {
+  const shown = clamp(fair + BOTS.rig, 0.03, 0.97);
+  const half = BOTS.spread / 2;
+  const priceUp = clamp(shown + half, 0.01, 0.99);
+  const priceDown = clamp(1 - shown + half, 0.01, 0.99);
+  const streak = recentStreak();
+
+  const r = { p0: p0, fair: fair, shown: shown, ts: Date.now(), bets: [], staked: 0 };
+
+  for (const b of BOTS.list) {
+    if (b.balance < 20) continue;                     // 输光了就不来了
+    const pJoin = clamp(0.62 * b.mood, 0.04, 0.95);   // 情绪越高，来得越勤
+    if (Math.random() > pJoin) continue;
+
+    const dir = Math.random() < botPUp(b, streak, shown) ? 'up' : 'down';
+    const price = dir === 'up' ? priceUp : priceDown;
+    /* 注码：基础 × 激进程度 × 亏损加注（loss chasing） */
+    const base = 25 * b.aggr * (1 + 0.3 * b.lossStreak) * (0.7 + Math.random() * 0.6);
+    const amt = Math.min(b.balance, Math.max(10, base));
+
+    b.balance -= amt;
+    const bet = {
+      bot: b, dir: dir, cost: amt,
+      price: price, shares: amt / price,
+      fairSide: dir === 'up' ? fair : 1 - fair
+    };
+    r.bets.push(bet);
+    r.staked += amt;
+  }
+
+  BOTS.round = r;
+  botRender();
+}
+
+/* 结算一局：算庄家盈亏，更新每个玩家的余额与情绪 */
+function botRoundSettle(closePrice) {
+  const r = BOTS.round;
+  if (!r) return;
+  BOTS.round = null;
+  if (!r.bets.length) { botRender(); return; }
+
+  const actualUp = closePrice > r.p0;
+  let housePnl = 0, expPnl = 0;
+
+  for (const bet of r.bets) {
+    const win = (bet.dir === 'up') === actualUp;
+    const payout = win ? bet.shares : 0;
+    housePnl += bet.cost - payout;
+    /* 期望收益 = 份额 × (买入价 − 该方向的公允概率)，与结果无关 */
+    expPnl += bet.shares * (bet.price - bet.fairSide);
+
+    const b = bet.bot;
+    b.balance += payout;
+    b.pnl += payout - bet.cost;
+    b.bets++;
+    if (win) {
+      b.wins++;
+      b.lossStreak = 0;
+      /* 赢得越多，情绪涨得越多 —— 赚得多就来得更勤 */
+      b.mood = Math.min(1.7, b.mood + 0.04 + 0.10 * clamp((payout - bet.cost) / bet.cost, 0, 2));
+    } else {
+      b.lossStreak++;
+      b.mood = Math.max(0.06, b.mood - 0.06 - 0.08 * clamp(bet.cost / Math.max(b.balance, 1), 0, 1.5));
+    }
+  }
+
+  /* 返水：庄家把盈利的一部分还给玩家，换来他们继续来 */
+  if (housePnl > 0 && BOTS.rebate > 0) {
+    const back = housePnl * BOTS.rebate;
+    const per = back / r.bets.length;
+    for (const bet of r.bets) {
+      bet.bot.balance += per;
+      bet.bot.mood = Math.min(1.7, bet.bot.mood + 0.02);
+    }
+    housePnl -= back;
+  }
+
+  BOTS.housePnl += housePnl;
+  BOTS.expPnl += expPnl;
+  BOTS.turnover += r.staked;
+  BOTS.rounds++;
+  BOTS.log.unshift({
+    ts: Date.now(), n: r.bets.length, staked: r.staked,
+    house: housePnl, mood: avgMood()
+  });
+  if (BOTS.log.length > 40) BOTS.log.length = 40;
+
+  botRender();
+}
+
+function avgMood() {
+  if (!BOTS.list.length) return 0;
+  let s = 0;
+  for (const b of BOTS.list) s += b.mood;
+  return s / BOTS.list.length;
+}
+
+function botRender() {
+  if (!$('#bkJoin')) return;
+
+  const r = BOTS.round;
+  $('#bkJoin').textContent = r ? r.bets.length : 0;
+  $('#bkStake').textContent = r ? r.staked.toFixed(0) : '0';
+
+  const lastHouse = BOTS.log.length ? BOTS.log[0].house : null;
+  const he = $('#bkHouse');
+  he.textContent = lastHouse == null ? '--' : (lastHouse >= 0 ? '+' : '') + lastHouse.toFixed(2);
+  he.className = lastHouse == null ? '' : lastHouse >= 0 ? 'pos' : 'neg';
+
+  $('#bkRounds').textContent = BOTS.rounds;
+  $('#bkTurn').textContent = BOTS.turnover >= 1000
+    ? (BOTS.turnover / 1000).toFixed(1) + 'k' : BOTS.turnover.toFixed(0);
+
+  const te = $('#bkTotal');
+  te.textContent = (BOTS.housePnl >= 0 ? '+' : '') + BOTS.housePnl.toFixed(2);
+  te.className = BOTS.housePnl > 0 ? 'pos' : BOTS.housePnl < 0 ? 'neg' : '';
+
+  const alive = BOTS.list.filter(b => b.balance >= 20).length;
+  const m = avgMood();
+  $('#botSub').textContent = t('bot.sub', alive, BOTS.list.length, (m * 100).toFixed(0),
+    (BOTS.expPnl >= 0 ? '+' : '') + BOTS.expPnl.toFixed(0),
+    (BOTS.housePnl >= 0 ? '+' : '') + BOTS.housePnl.toFixed(0));
+
+  const body = $('#botBody');
+  let html = '';
+  for (const L of BOTS.log) {
+    html += '<tr>'
+      + '<td>' + hhmm(L.ts) + '</td>'
+      + '<td>' + L.n + '</td>'
+      + '<td>' + L.staked.toFixed(0) + '</td>'
+      + '<td style="color:' + (L.house >= 0 ? '#16c784' : '#ff4d5e') + '">'
+      + (L.house >= 0 ? '+' : '') + L.house.toFixed(2) + '</td>'
+      + '<td>' + (L.mood * 100).toFixed(0) + '</td>'
+      + '</tr>';
+  }
+  body.innerHTML = html;
+}
+
+/* 是否到了「开新局 / 结算上一局」的时间点 */
+function botBoundary(closeTime) {
+  if (bucketMode) return closeTime % BUCKET_MS === 0;
+  return closeTime % (period * 60000) === 0;
+}
+
+/* =========================================================
  *  结算逻辑
  * ======================================================= */
 function onCandleClose(c) {
   const closeTime = c.t + 60000;      // 这根 K 线的收盘时刻
   simSettleAll(closeTime, c.c);       // 模拟盘按同一根收盘价结算
+
+  /* 庄家模拟器：先结算上一局，再按新的起点开一局 */
+  if (botBoundary(closeTime)) {
+    botRoundSettle(c.c);
+    botRoundOpen(c.c, bucketMode ? 0.5 : (pred ? pred.p : 0.5));
+  }
   const pm = period * 60000;
 
   /* 区间模式：只在区间终点结算一次，不参与 1 分钟 / 5 分钟预测 */
@@ -2569,6 +2908,7 @@ function switchPeriod(p) {
   pending = null;          // 模式变了，旧预测作废，等新整点重新锁定
   bk = null;
   SIM.mid = null;
+  BOTS.round = null;
 
   document.querySelectorAll('#seg button').forEach(function (b) {
     b.classList.toggle('on', String(b.dataset.p) === String(p));
@@ -2774,6 +3114,28 @@ document.querySelectorAll('#simSize button').forEach(function (b) {
   });
 });
 
+/* 庄家模拟器控制 */
+$('#botN').querySelectorAll('button').forEach(function (b) {
+  b.addEventListener('click', function () {
+    BOTS.n = +b.dataset.n;
+    $('#botN').querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); });
+    botsInit();
+  });
+});
+$('#botSpread').addEventListener('input', function () {
+  BOTS.spread = +this.value / 100;
+  $('#botSpreadV').textContent = (+this.value).toFixed(1) + '%';
+  botRender();
+});
+$('#botRebate').addEventListener('input', function () {
+  BOTS.rebate = +this.value / 100;
+  $('#botRebateV').textContent = this.value + '%';
+});
+$('#botRig').addEventListener('input', function () {
+  BOTS.rig = +this.value / 100;
+  $('#botRigV').textContent = (+this.value).toFixed(1) + 'pt';
+});
+
 /* 图表时间周期切换 */
 document.querySelectorAll('#tfSeg button').forEach(function (b) {
   b.addEventListener('click', function () { setChartTf(+b.dataset.tf); });
@@ -2825,6 +3187,7 @@ async function switchCoin(sym) {
   S.ready = false; S.connected = false; S.restBase = '';
   pred = null; pending = null; bk = null;
   SIM.mid = null;
+  BOTS.round = null;
   wsIdx = 0; wsRetry = 0;
 
   loadStats();
@@ -2888,6 +3251,7 @@ load();
 applyI18n();
 loadCoinModels();
 simLoad();
+botsInit();
 setCoinMeta(S.symbol);
 buildCoinSeg();
 $('#langSel').value = lang;
