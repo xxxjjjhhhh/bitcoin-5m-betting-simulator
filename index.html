@@ -189,6 +189,41 @@
 
   /* ---------- 历史 ---------- */
   .history-card{padding-bottom:4px}
+
+  /* ---------- 模拟盘 ---------- */
+  .sim-card{padding-bottom:0}
+  .sim-body{display:grid;grid-template-columns:296px minmax(0,1fr);gap:18px;padding:13px 16px 14px}
+  .sim-acct{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:11px}
+  .sim-acct .sa{background:var(--panel-2);border-radius:9px;padding:7px 9px;min-width:0}
+  .sim-acct .sa span{display:block;font-size:10px;color:var(--dim2);margin-bottom:2px;white-space:nowrap}
+  .sim-acct .sa b{font-size:13px;font-variant-numeric:tabular-nums;letter-spacing:-.2px}
+  .sim-quote{font-size:11px;color:var(--dim);line-height:1.75;margin-bottom:10px;min-height:56px}
+  .sim-quote .r{display:flex;justify-content:space-between;gap:8px}
+  .sim-quote b{color:var(--txt);font-variant-numeric:tabular-nums}
+  .sim-quote .neg{color:var(--up)}
+  .sim-quote .pos{color:var(--down)}
+  .sim-size{display:flex;gap:5px;margin-bottom:8px}
+  .sim-size button{flex:1;border:1px solid var(--line);background:transparent;color:var(--dim);
+    font-size:11px;padding:4px 0;border-radius:7px;cursor:pointer;font-family:inherit;transition:.15s}
+  .sim-size button:hover{color:var(--txt)}
+  .sim-size button.on{background:rgba(240,185,11,.15);color:var(--gold);border-color:rgba(240,185,11,.32);font-weight:650}
+  .sim-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .sim-actions button{border:0;border-radius:9px;padding:7px 0;font-size:12px;font-weight:650;cursor:pointer;
+    font-family:inherit;color:#0a0c11;transition:.15s}
+  .sim-actions button i{display:block;font-style:normal;font-size:10px;font-weight:500;opacity:.82;margin-top:1px}
+  .sim-up{background:linear-gradient(180deg,#ff6b7a,#ff4d5e)}
+  .sim-down{background:linear-gradient(180deg,#22d894,#16c784)}
+  .sim-actions button:hover{filter:brightness(1.08)}
+  .sim-actions button:disabled{opacity:.38;cursor:not-allowed;filter:none}
+  .sim-hint{font-size:10px;color:var(--dim2);margin-top:7px;line-height:1.6;min-height:16px}
+  .sim-tbl{width:100%;border-collapse:collapse;font-size:11.5px;table-layout:fixed}
+  .sim-tbl th{text-align:left;font-weight:500;color:var(--dim2);font-size:10px;padding:0 10px 7px;white-space:nowrap}
+  .sim-tbl td{padding:5px 10px;border-top:1px solid rgba(255,255,255,.045);white-space:nowrap;overflow:hidden;
+    text-overflow:ellipsis;font-variant-numeric:tabular-nums;color:var(--dim)}
+  .sim-tbl th:nth-child(n+4),.sim-tbl td:nth-child(n+4){text-align:right}
+  .sim-tbl th:nth-child(8),.sim-tbl td:nth-child(8){text-align:center}
+  .sim-tbl td.b{color:var(--txt)}
+  .sim-right{max-height:214px;overflow-y:auto}
   .h-body{max-height:196px;overflow-y:auto}
   .h-body::-webkit-scrollbar{width:8px}
   .h-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:4px}
@@ -361,6 +396,55 @@
     <div class="stat"><div class="k" data-i18n="stats.edge">对比随机基线</div><div class="v" id="stEdge">--</div></div>
   </div>
 
+  <!-- 模拟盘 -->
+  <section class="card sim-card">
+    <div class="card-head">
+      <h2 data-i18n="sim.title">模拟盘</h2>
+      <div class="legend"><span data-i18n="sim.note">虚拟资金 · 按币安预测市场的二元合约规则结算</span></div>
+    </div>
+    <div class="sim-body">
+      <div class="sim-left">
+        <div class="sim-acct">
+          <div class="sa"><span data-i18n="sim.balance">余额</span><b id="simBal">10,000.00</b></div>
+          <div class="sa"><span data-i18n="sim.pnl">累计盈亏</span><b id="simPnl">0.00</b></div>
+          <div class="sa"><span data-i18n="sim.open">待结算</span><b id="simOpen">0</b></div>
+        </div>
+
+        <div class="sim-quote" id="simQuote">--</div>
+
+        <div class="sim-size" id="simSize">
+          <button data-amt="100">100</button>
+          <button data-amt="500" class="on">500</button>
+          <button data-amt="1000">1000</button>
+          <button data-amt="max">MAX</button>
+        </div>
+
+        <div class="sim-actions">
+          <button class="sim-up" id="simUp"><span data-i18n="sim.buyUp">买涨</span><i>--</i></button>
+          <button class="sim-down" id="simDown"><span data-i18n="sim.buyDown">买跌</span><i>--</i></button>
+        </div>
+        <div class="sim-hint" id="simHint"></div>
+      </div>
+
+      <div class="sim-right">
+        <table class="sim-tbl">
+          <thead><tr>
+            <th data-i18n="sim.c.time">时间</th>
+            <th data-i18n="sim.c.market">市场</th>
+            <th data-i18n="sim.c.side">方向</th>
+            <th data-i18n="sim.c.price">买入价</th>
+            <th data-i18n="sim.c.shares">份额</th>
+            <th data-i18n="sim.c.cost">成本</th>
+            <th data-i18n="sim.c.pnl">盈亏</th>
+            <th data-i18n="sim.c.state">状态</th>
+          </tr></thead>
+          <tbody id="simBody"></tbody>
+        </table>
+        <div class="empty" id="simEmpty" data-i18n="sim.empty">还没有下注。选个金额，点买涨或买跌。</div>
+      </div>
+    </div>
+  </section>
+
   <!-- 历史 -->
   <section class="card history-card">
     <div class="card-head"><h2 data-i18n="hist.title">结算记录</h2>
@@ -471,6 +555,7 @@ const S = {
   sound: false
 };
 
+let lastSimTs = 0;
 let pred = null;        // 当前实时预测
 let pending = null;     // 已锁定、待结算的预测
 let history = [];       // 结算历史（新→旧）
@@ -607,7 +692,33 @@ const DICT = {
   'f.dev':          ['偏离度', 'Deviation', '乖離度', '이탈도', 'Отклонение'],
   'f.sigma':        ['剩余波动', 'Volatility left', '残りボラ', '남은 변동성', 'Остаточная волатильность'],
   'f.z':            ['标准分 z', 'z-score', 'zスコア', 'z 점수', 'z-оценка'],
-  'bucket.len':     ['区间长度', 'Interval length', '区間の長さ', '구간 길이', 'Длина интервала']
+  'bucket.len':     ['区间长度', 'Interval length', '区間の長さ', '구간 길이', 'Длина интервала'],
+  'sim.title':      ['模拟盘', 'Paper trading', 'ペーパー取引', '모의 거래', 'Демо-торговля'],
+  'sim.note':       ['虚拟资金 · 按币安预测市场的二元合约规则结算', 'Virtual funds · settles like Binance event contracts', '仮想資金 · バイナンスのイベントコントラクト方式', '가상 자금 · 바이낸스 이벤트 계약 방식', 'Виртуальные средства · по правилам событийных контрактов'],
+  'sim.balance':    ['余额', 'Balance', '残高', '잔액', 'Баланс'],
+  'sim.pnl':        ['累计盈亏', 'Total P&L', '累計損益', '누적 손익', 'Итоговый P&L'],
+  'sim.open':       ['待结算', 'Open', '未決済', '미결제', 'Открыто'],
+  'sim.buyUp':      ['买涨', 'Buy UP', '上昇を買う', '상승 매수', 'Купить рост'],
+  'sim.buyDown':    ['买跌', 'Buy DOWN', '下落を買う', '하락 매수', 'Купить падение'],
+  'sim.settleAt':   ['结算', 'Settles', '確定', '정산', 'Расчёт'],
+  'sim.fair':       ['模型公允价', 'Model fair', 'モデル適正価格', '모델 공정가', 'Справедливая цена'],
+  'sim.mkt':        ['市场中间价', 'Market mid', '市場中間価格', '시장 중간가', 'Середина рынка'],
+  'sim.c.time':     ['时间', 'Time', '時刻', '시간', 'Время'],
+  'sim.c.market':   ['市场', 'Market', '市場', '시장', 'Рынок'],
+  'sim.c.side':     ['方向', 'Side', '方向', '방향', 'Сторона'],
+  'sim.c.price':    ['买入价', 'Price', '買値', '매수가', 'Цена'],
+  'sim.c.shares':   ['份额', 'Shares', '枚数', '수량', 'Доли'],
+  'sim.c.cost':     ['成本', 'Cost', 'コスト', '비용', 'Стоимость'],
+  'sim.c.pnl':      ['盈亏', 'P&L', '損益', '손익', 'P&L'],
+  'sim.c.state':    ['状态', 'State', '状態', '상태', 'Статус'],
+  'sim.empty':      ['还没有下注。选个金额，点买涨或买跌。', 'No bets yet. Pick an amount, then buy UP or DOWN.', 'まだ取引がありません。金額を選んで上昇／下落を買います。', '아직 거래가 없습니다. 금액을 고르고 상승/하락을 선택하세요.', 'Ставок пока нет. Выберите сумму и направление.'],
+  'sim.noData':     ['等待模型就绪…', 'Waiting for the model…', 'モデル準備中…', '모델 준비 중…', 'Ожидание модели…'],
+  'sim.insufficient':['余额不足', 'Insufficient balance', '残高不足', '잔액 부족', 'Недостаточно средств'],
+  'sim.placed':     ['已下单，等待结算', 'Order placed, awaiting settlement', '注文済み・確定待ち', '주문 완료 · 정산 대기', 'Ставка принята, ждём расчёта'],
+  'sim.pending':    ['待结算', 'Open', '未確定', '대기', 'Открыто'],
+  'sim.win':        ['赢', 'Win', '勝ち', '승', 'Выигрыш'],
+  'sim.lose':       ['输', 'Lose', '負け', '패', 'Проигрыш'],
+  'sim.void':       ['退回', 'Void', '返却', '반환', 'Возврат']
 };
 
 function t(key) {
@@ -1090,6 +1201,7 @@ function setBucketMin(m) {
   bucketMin = m;
   BUCKET_MS = m * 60000;
   bk = null;
+  SIM.mid = null;
   document.querySelectorAll('#blenSeg button').forEach(function (b) {
     b.classList.toggle('on', +b.dataset.b === m);
   });
@@ -1253,10 +1365,242 @@ function updateBucketUI() {
 }
 
 /* =========================================================
+ *  模拟盘：按币安预测市场（与 Predict.fun 集成的二元事件合约）规则
+ *
+ *  规则（来自公开资料）：
+ *    · 合约是「是 / 否」二元合约，价格在 0.01 ~ 0.99 之间浮动
+ *    · 价格本身就等于市场认为的概率
+ *    · 猜对每份结算 1 USDT，猜错结算 0
+ *    · 因此：赔率 = 1 / 价格，保本胜率 = 价格
+ *
+ *  这里的实现：
+ *    · 公允价 = 模型算出的概率（区间模式用 bk.p，其余用 pred.p）
+ *    · 市场中间价 = 公允价 + 均值回归噪声（模拟其他参与者的报价会偏离真实概率）
+ *    · 买入要付「中间价 + 半个价差」，价差就是平台抽水
+ *    · 期望值 = 公允概率 − 买入价，为正才值得下注
+ * ======================================================= */
+const SIM = {
+  start: 10000,       // 初始虚拟资金
+  spread: 0.02,       // 买卖总价差（每边各付一半）
+  amt: 500,           // 当前选中的下注金额
+  balance: 10000,
+  mid: null,          // 市场中间价
+  bets: []
+};
+
+/* 公允概率：结算价 > 基准价 的概率 */
+function simFair() {
+  if (bucketMode) return bk ? bk.p : null;
+  return pred ? pred.p : null;
+}
+
+/* 结算时刻与基准价 */
+function simSettle() {
+  if (bucketMode) return bk ? { t: bk.end, p0: bk.open } : null;
+  const pm = period * 60000;
+  const t = Math.floor(Date.now() / pm) * pm + pm;
+  return { t: t, p0: S.price };
+}
+
+/* 市场中间价：向公允价回归 + 噪声 */
+function simStep() {
+  const fair = simFair();
+  if (fair == null) return null;
+  if (SIM.mid == null) SIM.mid = fair;
+  SIM.mid += (fair - SIM.mid) * 0.08 + (Math.random() - 0.5) * 0.02;
+  SIM.mid = clamp(SIM.mid, 0.04, 0.96);
+  return fair;
+}
+
+function simQuote() {
+  const fair = simFair();
+  if (fair == null || SIM.mid == null) return null;
+  const half = SIM.spread / 2;
+  return {
+    fair: fair,
+    mid: SIM.mid,
+    up: clamp(SIM.mid + half, 0.01, 0.99),
+    down: clamp(1 - SIM.mid + half, 0.01, 0.99)
+  };
+}
+
+function simLoad() {
+  try {
+    const raw = localStorage.getItem('btc-pred-sim');
+    if (!raw) return;
+    const o = JSON.parse(raw);
+    if (o && typeof o.balance === 'number') SIM.balance = o.balance;
+    if (o && Array.isArray(o.bets)) SIM.bets = o.bets.slice(0, 100);
+  } catch (e) {}
+}
+function simSave() {
+  try {
+    localStorage.setItem('btc-pred-sim', JSON.stringify({ balance: SIM.balance, bets: SIM.bets }));
+  } catch (e) {}
+}
+
+/* 下单 */
+function simBet(dir) {
+  const q = simQuote();
+  const st = simSettle();
+  if (!q || !st) return;
+  const price = dir === 'up' ? q.up : q.down;
+  const amt = Math.min(SIM.amt === 'max' ? SIM.balance : SIM.amt, SIM.balance);
+  if (!(amt >= 1)) { simHint(t('sim.insufficient')); return; }
+
+  SIM.balance -= amt;
+  SIM.bets.unshift({
+    ts: Date.now(),
+    sym: S.base,
+    mode: bucketMode ? (bucketMin === 60 ? 'B1h' : 'B' + bucketMin + 'm') : period + 'm',
+    dir: dir,
+    price: price,
+    shares: amt / price,
+    cost: amt,
+    p0: st.p0,
+    settleTime: st.t,
+    fair: q.fair,
+    settled: false,
+    win: null,
+    pnl: null
+  });
+  if (SIM.bets.length > 100) SIM.bets.length = 100;
+  simSave();
+  simRender();
+  simHint(t('sim.placed'));
+}
+
+/* 结算：由 onCandleClose 调用 */
+function simSettleAll(closeTime, closePrice) {
+  let changed = false;
+  for (const b of SIM.bets) {
+    if (b.settled) continue;
+    if (b.settleTime === closeTime) {
+      const actualUp = closePrice > b.p0;
+      const win = (b.dir === 'up') === actualUp;
+      const payout = win ? b.shares : 0;
+      b.settled = true;
+      b.win = win;
+      b.pnl = payout - b.cost;
+      SIM.balance += payout;
+      changed = true;
+    } else if (b.settleTime < closeTime) {
+      /* 跳过了结算点（断线等），原样退回 */
+      b.settled = true;
+      b.win = null;
+      b.pnl = 0;
+      SIM.balance += b.cost;
+      changed = true;
+    }
+  }
+  if (changed) { simSave(); simRender(); }
+}
+
+let simHintTimer = null;
+function simHint(msg) {
+  const el = $('#simHint');
+  if (!el) return;
+  el.textContent = msg || '';
+  clearTimeout(simHintTimer);
+  if (msg) simHintTimer = setTimeout(function () { el.textContent = ''; }, 2600);
+}
+
+/* 渲染：报价（高频，tick 里调用） */
+function simRenderQuote() {
+  const q = simQuote();
+  const st = simSettle();
+  const box = $('#simQuote');
+  if (!q || !st) {
+    box.textContent = t('sim.noData');
+    $('#simUp').disabled = true;
+    $('#simDown').disabled = true;
+    return;
+  }
+  $('#simUp').disabled = SIM.balance < 1;
+  $('#simDown').disabled = SIM.balance < 1;
+
+  const left = Math.max(0, (st.t - Date.now()) / 1000);
+  const leftTxt = left >= 60
+    ? Math.floor(left / 60) + ':' + pad2(Math.floor(left % 60))
+    : Math.ceil(left) + 's';
+
+  const evUp = q.fair - q.up;
+  const evDown = (1 - q.fair) - q.down;
+  const cls = v => v > 0.002 ? 'pos' : v < -0.002 ? 'neg' : '';
+  const sgn = v => (v >= 0 ? '+' : '') + v.toFixed(3);
+
+  box.innerHTML =
+    '<div class="r"><span>' + t('sim.settleAt') + '</span><b>' + hhmm(st.t) + ' · ' + leftTxt + '</b></div>'
+    + '<div class="r"><span>' + t('sim.fair') + '</span><b>' + (q.fair * 100).toFixed(1) + '%</b></div>'
+    + '<div class="r"><span>' + t('sim.mkt') + '</span><b>' + (q.mid * 100).toFixed(1) + '%</b></div>'
+    + '<div class="r"><span>' + t('sim.buyUp') + ' ' + q.up.toFixed(3) + ' · ' + (1 / q.up).toFixed(2) + 'x</span>'
+    + '<b class="' + cls(evUp) + '">' + sgn(evUp) + '</b></div>'
+    + '<div class="r"><span>' + t('sim.buyDown') + ' ' + q.down.toFixed(3) + ' · ' + (1 / q.down).toFixed(2) + 'x</span>'
+    + '<b class="' + cls(evDown) + '">' + sgn(evDown) + '</b></div>';
+
+  $('#simUp').querySelector('i').textContent = q.up.toFixed(3) + ' · ' + (1 / q.up).toFixed(2) + 'x';
+  $('#simDown').querySelector('i').textContent = q.down.toFixed(3) + ' · ' + (1 / q.down).toFixed(2) + 'x';
+}
+
+/* 渲染：账户 + 记录 */
+function simRender() {
+  simRenderQuote();
+
+  let pnl = 0, open = 0;
+  for (const b of SIM.bets) {
+    if (b.settled) pnl += (b.pnl || 0);
+    else open++;
+  }
+  $('#simBal').textContent = SIM.balance.toFixed(2);
+  const pe = $('#simPnl');
+  pe.textContent = (pnl >= 0 ? '+' : '') + pnl.toFixed(2);
+  pe.className = pnl > 0 ? 'pos' : pnl < 0 ? 'neg' : '';
+  $('#simOpen').textContent = open;
+
+  const body = $('#simBody');
+  const empty = $('#simEmpty');
+  if (!SIM.bets.length) {
+    body.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  let html = '';
+  for (const b of SIM.bets) {
+    const dirTxt = b.dir === 'up' ? t('dir.up') : t('dir.down');
+    const dirCls = b.dir === 'up' ? 'up' : 'down';
+    let state, pnlTxt = '--', pnlCls = '';
+    if (!b.settled) {
+      state = '<span class="tag per">' + t('sim.pending') + '</span>';
+    } else if (b.win === null) {
+      state = '<span class="tag flat">' + t('sim.void') + '</span>';
+      pnlTxt = '0.00';
+    } else {
+      state = '<span class="tag ' + (b.win ? 'hit' : 'miss') + '">' + t(b.win ? 'sim.win' : 'sim.lose') + '</span>';
+      pnlTxt = (b.pnl >= 0 ? '+' : '') + b.pnl.toFixed(2);
+      pnlCls = b.pnl > 0 ? 'style="color:#16c784"' : b.pnl < 0 ? 'style="color:#ff4d5e"' : '';
+    }
+    html += '<tr>'
+      + '<td>' + hhmm(b.ts) + '</td>'
+      + '<td class="b">' + b.sym + ' · ' + b.mode + '</td>'
+      + '<td><span class="tag ' + dirCls + '">' + dirTxt + '</span></td>'
+      + '<td>' + b.price.toFixed(3) + '</td>'
+      + '<td>' + b.shares.toFixed(1) + '</td>'
+      + '<td>' + b.cost.toFixed(2) + '</td>'
+      + '<td ' + pnlCls + '>' + pnlTxt + '</td>'
+      + '<td>' + state + '</td>'
+      + '</tr>';
+  }
+  body.innerHTML = html;
+}
+
+/* =========================================================
  *  结算逻辑
  * ======================================================= */
 function onCandleClose(c) {
   const closeTime = c.t + 60000;      // 这根 K 线的收盘时刻
+  simSettleAll(closeTime, c.c);       // 模拟盘按同一根收盘价结算
   const pm = period * 60000;
 
   /* 区间模式：只在区间终点结算一次，不参与 1 分钟 / 5 分钟预测 */
@@ -2017,6 +2361,13 @@ function tick() {
     }
   }
 
+  /* 模拟盘：市场报价缓慢游走 */
+  if (now - lastSimTs > 400) {
+    lastSimTs = now;
+    simStep();
+    simRenderQuote();
+  }
+
   drawChart();
   if (bucketMode) drawGauge(bk ? bk.p : 0.5);
   else if (pred) drawGauge(pred.p);
@@ -2109,6 +2460,7 @@ function switchPeriod(p) {
   period = isB ? 5 : p;
   pending = null;          // 模式变了，旧预测作废，等新整点重新锁定
   bk = null;
+  SIM.mid = null;
 
   document.querySelectorAll('#seg button').forEach(function (b) {
     b.classList.toggle('on', String(b.dataset.p) === String(p));
@@ -2304,6 +2656,16 @@ document.querySelectorAll('#seg button').forEach(function (b) {
   });
 });
 
+/* 模拟盘 */
+$('#simUp').addEventListener('click', function () { simBet('up'); });
+$('#simDown').addEventListener('click', function () { simBet('down'); });
+document.querySelectorAll('#simSize button').forEach(function (b) {
+  b.addEventListener('click', function () {
+    SIM.amt = b.dataset.amt === 'max' ? 'max' : +b.dataset.amt;
+    document.querySelectorAll('#simSize button').forEach(function (x) { x.classList.toggle('on', x === b); });
+  });
+});
+
 /* 图表时间周期切换 */
 document.querySelectorAll('#tfSeg button').forEach(function (b) {
   b.addEventListener('click', function () { setChartTf(+b.dataset.tf); });
@@ -2354,6 +2716,7 @@ async function switchCoin(sym) {
   S.day = { open: 0, high: 0, low: 0, vol: 0, chg: 0 };
   S.ready = false; S.connected = false; S.restBase = '';
   pred = null; pending = null; bk = null;
+  SIM.mid = null;
   wsIdx = 0; wsRetry = 0;
 
   loadStats();
@@ -2395,6 +2758,7 @@ function setLang(l) {
   }
   refreshStatus();
   renderHeader(); renderStats(); renderHistory();
+  simRender();
   save();
 }
 
@@ -2415,6 +2779,7 @@ async function setRegion(r) {
 load();
 applyI18n();
 loadCoinModels();
+simLoad();
 setCoinMeta(S.symbol);
 buildCoinSeg();
 $('#langSel').value = lang;
@@ -2438,6 +2803,7 @@ $('#histEmpty').textContent = bucketMode
 
 renderHistory();
 renderStats();
+simRender();
 showOverlay('loading');
 setInterval(updateCountdown, 120);
 
