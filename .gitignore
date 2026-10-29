@@ -1,0 +1,23 @@
+# 忽略大文件与临时产物
+
+# 原始行情数据（43MB，可随时用 model/fetch_data.js 重新拉取）
+model/*.csv
+
+# 训练产物中的二进制模型（体积大，且可由 train.py 重新生成）
+model/*.joblib
+
+# Python 缓存
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# 临时测试文件
+_*.png
+_*.js
+_chk.js
+
+# 系统文件
+.DS_Store
+Thumbs.db
+desktop.ini
