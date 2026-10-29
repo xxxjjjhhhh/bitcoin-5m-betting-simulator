@@ -207,6 +207,16 @@
     font-size:11px;padding:4px 0;border-radius:7px;cursor:pointer;font-family:inherit;transition:.15s}
   .sim-size button:hover{color:var(--txt)}
   .sim-size button.on{background:rgba(240,185,11,.15);color:var(--gold);border-color:rgba(240,185,11,.32);font-weight:650}
+  .sim-amt{display:flex;gap:6px;margin-bottom:8px}
+  .sim-amt input{flex:1;min-width:0;background:var(--panel-2);border:1px solid var(--line);border-radius:7px;
+    padding:4px 8px;font-size:11px;font-family:inherit;color:var(--txt);outline:none;
+    appearance:textfield;-moz-appearance:textfield}
+  .sim-amt input::-webkit-outer-spin-button,.sim-amt input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .sim-amt input:focus{border-color:rgba(240,185,11,.42)}
+  .sim-amt input::placeholder{color:var(--dim2)}
+  .sim-amt button{width:32px;flex:0 0 32px;border:1px solid var(--line);background:transparent;color:var(--dim);
+    border-radius:7px;cursor:pointer;font-size:13px;font-family:inherit;transition:.15s;line-height:1}
+  .sim-amt button:hover{color:var(--gold);border-color:rgba(240,185,11,.4)}
   .sim-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
   .sim-actions button{border:0;border-radius:9px;padding:7px 0;font-size:12px;font-weight:650;cursor:pointer;
     font-family:inherit;color:#0a0c11;transition:.15s}
@@ -473,6 +483,12 @@
           <button data-amt="500" class="on">500</button>
           <button data-amt="1000">1000</button>
           <button data-amt="max">MAX</button>
+        </div>
+
+        <div class="sim-amt">
+          <input type="number" id="simAmtInput" min="1" step="50"
+                 data-i18n-ph="sim.amtPh" placeholder="自定义金额">
+          <button id="simReset" data-i18n-title="sim.reset" title="重置账户">↺</button>
         </div>
 
         <div class="sim-actions">
@@ -857,6 +873,10 @@ const DICT = {
   'sim.win':        ['赢', 'Win', '勝ち', '승', 'Выигрыш'],
   'sim.lose':       ['输', 'Lose', '負け', '패', 'Проигрыш'],
   'sim.void':       ['退回', 'Void', '返却', '반환', 'Возврат'],
+  'sim.amtPh':      ['自定义金额', 'Custom amount', '金額を入力', '금액 입력', 'Своя сумма'],
+  'sim.reset':      ['重置账户', 'Reset account', '口座をリセット', '계정 초기화', 'Сбросить счёт'],
+  'sim.resetConfirm':['重置模拟盘？余额恢复为 {0}，成交记录会清空。', 'Reset the paper account? Balance goes back to {0} and all trades are cleared.', '口座をリセットしますか？残高は {0} に戻り、取引履歴は消去されます。', '계정을 초기화할까요? 잔액이 {0}(으)로 돌아가고 거래 기록이 삭제됩니다.', 'Сбросить счёт? Баланс вернётся к {0}, история сделок очистится.'],
+  'sim.resetDone':  ['已重置为 {0}', 'Reset to {0}', '{0} にリセットしました', '{0}(으)로 초기화됨', 'Сброшено до {0}'],
   'house.spread':   ['庄家价差收入', 'House spread income', 'ハウス スプレッド収入', '하우스 스프레드 수익', 'Доход спреда'],
   'house.real':     ['庄家实际盈亏', 'House realized P&L', 'ハウス実現損益', '하우스 실현 손익', 'Фактический P&L'],
   'house.inv':      ['库存敞口', 'Inventory exposure', '在庫エクスポージャー', '재고 노출', 'Экспозиция запаса'],
@@ -910,6 +930,9 @@ function applyI18n() {
     const k = el.getAttribute('data-i18n');
     const v = t(k);
     if (v !== k) el.textContent = v;
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(function (el) {
+    el.placeholder = t(el.getAttribute('data-i18n-ph'));
   });
   document.querySelectorAll('[data-i18n-title]').forEach(function (el) {
     el.title = t(el.getAttribute('data-i18n-title'));
@@ -1731,6 +1754,17 @@ function simHint(msg) {
   el.textContent = msg || '';
   clearTimeout(simHintTimer);
   if (msg) simHintTimer = setTimeout(function () { el.textContent = ''; }, 2600);
+}
+
+/* 重置模拟账户：余额回到初始值，成交记录清空 */
+function simReset() {
+  if (!confirm(t('sim.resetConfirm', SIM.start.toLocaleString('en-US')))) return;
+  SIM.balance = SIM.start;
+  SIM.bets = [];
+  SIM.mid = null;
+  simSave();
+  simRender();
+  simHint(t('sim.resetDone', SIM.start.toLocaleString('en-US')));
 }
 
 /* 渲染：报价（高频，tick 里调用） */
@@ -3260,6 +3294,7 @@ document.querySelectorAll('#simSize button').forEach(function (b) {
   b.addEventListener('click', function () {
     SIM.amt = b.dataset.amt === 'max' ? 'max' : +b.dataset.amt;
     document.querySelectorAll('#simSize button').forEach(function (x) { x.classList.toggle('on', x === b); });
+    $('#simAmtInput').value = '';
   });
 });
 
@@ -3300,6 +3335,16 @@ $('#botRig').addEventListener('input', function () {
 
 /* 历史回放 */
 $('#btRun').addEventListener('click', botBacktest);
+
+/* 自定义金额 / 重置账户 */
+$('#simAmtInput').addEventListener('input', function () {
+  const v = parseFloat(this.value);
+  if (isFinite(v) && v > 0) {
+    SIM.amt = v;
+    document.querySelectorAll('#simSize button').forEach(function (x) { x.classList.remove('on'); });
+  }
+});
+$('#simReset').addEventListener('click', simReset);
 
 /* 图表时间周期切换 */
 document.querySelectorAll('#tfSeg button').forEach(function (b) {
