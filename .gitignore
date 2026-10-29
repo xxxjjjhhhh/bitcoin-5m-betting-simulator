@@ -1,7 +1,8 @@
 # 忽略大文件与临时产物
 
-# 原始行情数据（43MB，可随时用 model/fetch_data.js 重新拉取）
+# 原始行情数据（单币 30-40MB，可用 model/fetch_data.js 重新拉取）
 model/*.csv
+model/data/
 
 # 训练产物中的二进制模型（体积大，且可由 train.py 重新生成）
 model/*.joblib

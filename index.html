@@ -173,7 +173,8 @@
   .f-val{text-align:right;font-variant-numeric:tabular-nums;color:var(--dim);font-size:11px}
   .f-val.pos{color:var(--up)}.f-val.neg{color:var(--down)}
 
-  .p-foot{margin-top:auto;padding:9px 16px 8px;font-size:10.5px;color:var(--dim2);line-height:1.6;border-top:1px solid rgba(255,255,255,.05)}
+  .p-foot{margin-top:auto;padding:9px 16px 2px;font-size:10.5px;color:var(--dim2);line-height:1.6}
+  .mtag{padding:0 16px 9px;font-size:10px;color:var(--dim2);letter-spacing:.2px;border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:9px}
 
   /* ---------- 统计 ---------- */
   .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
@@ -348,6 +349,7 @@
       </div>
 
       <div class="p-foot" id="pFoot">模型基于 8 个短周期统计特征加权合成，概率偏离 50% 越大代表信号越强。</div>
+      <div class="mtag" id="mTag"></div>
     </aside>
   </div>
 
@@ -574,6 +576,10 @@ const DICT = {
   'v.waitMark':     ['等待下一个 5 分钟整点…', 'Waiting for the next 5-minute mark…', '次の5分の区切り待ち…', '다음 5분 정각 대기…', 'Ждём 5-минутную отметку…'],
   'price.now':      ['现价', 'Now', '現在値', '현재가', 'Сейчас'],
   'v.left':         ['剩余', 'left', '残り', '남음', 'осталось'],
+  'v.model':        ['训练模型', 'Trained model', '学習モデル', '학습 모델', 'Обученная модель'],
+  'v.base':         ['样本基准', 'sample base', 'サンプル基準', '표본 기준', 'базовая доля'],
+  'v.vsBase':       ['相对基准', 'vs base', '基準比', '기준 대비', 'к базе'],
+  'v.heuristic':    ['启发式权重（未加载训练模型）', 'Heuristic weights (no trained model)', 'ヒューリスティック重み（学習モデル未読込）', '휴리스틱 가중치 (학습 모델 미로드)', 'Эвристические веса (модель не загружена)'],
   'status.connecting':['连接中…', 'Connecting…', '接続中…', '연결 중…', 'Подключение…'],
   'status.loading': ['加载历史数据…', 'Loading history…', '履歴を読み込み中…', '과거 데이터 로딩 중…', 'Загрузка истории…'],
   'status.connected':['实时行情已连接', 'Live feed connected', 'リアルタイム接続済み', '실시간 연결됨', 'Поток подключён'],
@@ -716,6 +722,44 @@ function priceAgo(ms) {
 /* =========================================================
  *  预测模型
  * ======================================================= */
+
+/* ---------- 各币种训练好的模型（model/coin_models.json） ----------
+ * 结构：{ "BTCUSDT": { f:[因子名], w:[系数], b:截距, cal:[[lo,hi,实测率]] } }
+ * 加载失败（比如用 file:// 直接打开）就自动退回启发式权重。
+ */
+let COIN_MODELS = null;
+
+async function loadCoinModels() {
+  try {
+    const r = await fetch('model/coin_models.json', { cache: 'no-store' });
+    if (!r.ok) return;
+    COIN_MODELS = await r.json();
+  } catch (e) { /* 静默退回启发式 */ }
+}
+
+function calLookup(cal, p) {
+  for (let i = 0; i < cal.length; i++) {
+    if (p >= cal[i][0] && p < cal[i][1]) return cal[i][2];
+  }
+  return p;
+}
+
+/* 有该币种的训练模型就用它，否则返回 null 走启发式 */
+function modelProb(F) {
+  if (!COIN_MODELS) return null;
+  const m = COIN_MODELS[S.symbol];
+  if (!m || !m.w || !m.f) return null;
+  let z = m.b;
+  for (let i = 0; i < m.f.length; i++) {
+    for (let j = 0; j < F.length; j++) {
+      if (F[j].key === m.f[i]) { z += m.w[i] * F[j].v; break; }
+    }
+  }
+  let p = 1 / (1 + Math.exp(-z));
+  if (m.cal && m.cal.length) p = calLookup(m.cal, p);
+  return p;
+}
+
 function computePrediction() {
   const cs = S.candles;
   if (cs.length < 26) return null;
@@ -814,15 +858,23 @@ function computePrediction() {
   for (const f of F) { score += f.v * f.w; wsum += f.w; }
   score /= wsum;   // 归一化到 [-1,1]
 
-  let p = 0.5 + 0.44 * tanh(score * 1.75);
-
-  /* 波动率调节：极端波动 / 死盘时降低置信度 */
   const atrPct = atr / price * 100;
-  let damp = 1;
-  if (atrPct > 0.55) damp = 0.72;
-  else if (atrPct < 0.035) damp = 0.82;
-  p = 0.5 + (p - 0.5) * damp;
-  p = clamp(p, 0.06, 0.94);
+  let p, modelUsed = false;
+
+  const mp = modelProb(F);
+  if (mp != null) {
+    /* 训练模型：概率已按该币种验证集校准过，不再叠加波动率抑制 */
+    modelUsed = true;
+    p = clamp(mp, 0.08, 0.92);
+  } else {
+    p = 0.5 + 0.44 * tanh(score * 1.75);
+    /* 波动率调节：极端波动 / 死盘时降低置信度 */
+    let damp = 1;
+    if (atrPct > 0.55) damp = 0.72;
+    else if (atrPct < 0.035) damp = 0.82;
+    p = 0.5 + (p - 0.5) * damp;
+    p = clamp(p, 0.06, 0.94);
+  }
 
   return {
     p: p,
@@ -830,7 +882,8 @@ function computePrediction() {
     conf: Math.abs(p - 0.5) * 2,
     factors: F,
     score: score,
-    atrPct: atrPct
+    atrPct: atrPct,
+    modelUsed: modelUsed
   };
 }
 
@@ -1994,20 +2047,46 @@ function updatePredictUI() {
     lk.textContent = period === 5 ? t('v.waitMark') : t('v.waitCandle');
   }
 
-  const conf = pred.conf;
+  /* 校准后的概率本来就贴近样本基准（比如下跌样本里 p≈0.48），
+     所以模型模式下用「偏离基准多少」判断信号强度，而不是偏离 50% */
+  const cmv = COIN_MODELS && COIN_MODELS[S.symbol];
+  const base = (pred.modelUsed && cmv && cmv.base) ? cmv.base : 0.5;
+  const strength = Math.abs(pred.p - base);
+
   let txt;
-  if (conf < 0.10) txt = t('verdict.weak');
-  else if (conf < 0.22) txt = t(pred.dir === 'up' ? 'verdict.mildU' : 'verdict.mildD');
-  else if (conf < 0.38) txt = t('verdict.mid');
-  else txt = t('verdict.strong');
+  if (pred.modelUsed) {
+    if (strength < 0.02) txt = t('verdict.weak');
+    else if (strength < 0.06) txt = t(pred.dir === 'up' ? 'verdict.mildU' : 'verdict.mildD');
+    else if (strength < 0.14) txt = t('verdict.mid');
+    else txt = t('verdict.strong');
+  } else {
+    const c0 = Math.abs(pred.p - 0.5);
+    if (c0 < 0.05) txt = t('verdict.weak');
+    else if (c0 < 0.11) txt = t(pred.dir === 'up' ? 'verdict.mildU' : 'verdict.mildD');
+    else if (c0 < 0.19) txt = t('verdict.mid');
+    else txt = t('verdict.strong');
+  }
 
   const book = pred.factors.find(f => f.key === 'book');
   const flow = pred.factors.find(f => f.key === 'flow');
-  $('#vSub').textContent = txt + ' · ' + t('v.volatility') + ' ' + pred.atrPct.toFixed(3) + '%';
+  const edgeTxt = pred.modelUsed && cmv
+    ? ' · ' + t('v.vsBase') + ' ' + ((pred.p - cmv.base) * 100 >= 0 ? '+' : '')
+      + ((pred.p - cmv.base) * 100).toFixed(1) + 'pt'
+    : '';
+  $('#vSub').textContent = txt + ' · ' + t('v.volatility') + ' ' + pred.atrPct.toFixed(3) + '%' + edgeTxt;
 
   $('#pFoot').textContent = t('f.book') + ' ' + (book ? book.desc : '--')
     + '　' + t('f.flow') + ' ' + (flow ? flow.desc : '--')
     + '　' + t('v.score') + ' ' + (pred.score >= 0 ? '+' : '') + pred.score.toFixed(3);
+
+  const mt = $('#mTag');
+  const cm = COIN_MODELS && COIN_MODELS[S.symbol];
+  if (pred.modelUsed && cm) {
+    mt.textContent = t('v.model') + ' ' + S.base + '-7F · ' + t('v.base') + ' '
+      + (cm.base * 100).toFixed(1) + '% · AUC ' + (cm.auc || 0).toFixed(3);
+  } else {
+    mt.textContent = t('v.heuristic');
+  }
 }
 
 function updateCountdown() {
@@ -2335,6 +2414,7 @@ async function setRegion(r) {
  * ======================================================= */
 load();
 applyI18n();
+loadCoinModels();
 setCoinMeta(S.symbol);
 buildCoinSeg();
 $('#langSel').value = lang;
