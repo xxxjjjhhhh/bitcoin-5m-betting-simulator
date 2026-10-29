@@ -265,6 +265,21 @@
     font-variant-numeric:tabular-nums;color:var(--dim)}
   .bot-tbl th:nth-child(n+2),.bot-tbl td:nth-child(n+2){text-align:right}
   .bot-right{max-height:250px;overflow-y:auto}
+
+  /* ---------- 历史回放 ---------- */
+  .bot-bt{border-top:1px solid rgba(255,255,255,.055);padding:11px 16px 13px}
+  .bt-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .bt-f{display:flex;align-items:center;gap:7px;font-size:10.5px;color:var(--dim2)}
+  .bt-f input{background:var(--panel-2);border:1px solid var(--line);border-radius:7px;
+    padding:4px 8px;font-size:11px;font-family:inherit;color:var(--txt);outline:none;
+    color-scheme:dark;cursor:pointer}
+  .bt-f input:hover{border-color:rgba(255,255,255,.22)}
+  .bt-note{font-size:10px;color:var(--dim2);margin-left:auto}
+  #btRun{padding:5px 12px;font-size:11.5px}
+  #btRun:disabled{opacity:.45;cursor:not-allowed}
+  .bt-res{margin-top:9px;font-size:11px;color:var(--dim);line-height:1.75;min-height:18px}
+  .bt-res .bt-line{font-variant-numeric:tabular-nums}
+  .bt-res b{color:var(--txt)}
   .h-body{max-height:196px;overflow-y:auto}
   .h-body::-webkit-scrollbar{width:8px}
   .h-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:4px}
@@ -551,6 +566,20 @@
           <tbody id="botBody"></tbody>
         </table>
       </div>
+    </div>
+
+    <div class="bot-bt">
+      <div class="bt-row">
+        <label class="bt-f"><span data-i18n="bt.from">开始</span>
+          <input type="datetime-local" id="btFrom">
+        </label>
+        <label class="bt-f"><span data-i18n="bt.to">结束</span>
+          <input type="datetime-local" id="btTo">
+        </label>
+        <button class="btn" id="btRun" data-i18n="bt.run">回放这段历史</button>
+        <span class="bt-note" data-i18n="bt.note">最多 7 天 · 用这段 K 线把庄家模拟重跑一遍</span>
+      </div>
+      <div class="bt-res" id="btRes"></div>
     </div>
   </section>
 
@@ -853,6 +882,17 @@ const DICT = {
   'bot.c.house':    ['庄家盈亏', 'House', 'ハウス', '하우스', 'Дом'],
   'bot.c.mood':     ['情绪', 'Mood', 'ムード', '심리', 'Настрой'],
   'bot.sub':        ['存活 {0}/{1} 人 · 平均情绪 {2} · 累计期望 {3} · 实际 {4}', 'Alive {0}/{1} · avg mood {2} · expected {3} · actual {4}', '生存 {0}/{1} · 平均ムード {2} · 期待 {3} · 実際 {4}', '생존 {0}/{1} · 평균 심리 {2} · 기대 {3} · 실제 {4}', 'Живых {0}/{1} · настрой {2} · ожидание {3} · факт {4}'],
+  'bt.from':        ['开始', 'From', '開始', '시작', 'С'],
+  'bt.to':          ['结束', 'To', '終了', '종료', 'По'],
+  'bt.run':         ['回放这段历史', 'Replay this range', 'この期間を再生', '이 구간 재생', 'Воспроизвести'],
+  'bt.note':        ['最多 7 天 · 用这段 K 线把庄家模拟重跑一遍', 'Up to 7 days · re-runs the house simulation over these candles', '最大7日 · この足でハウス・シミュレーションを再実行', '최대 7일 · 이 봉으로 하우스 시뮬레이션을 다시 실행', 'До 7 дней · прогон симуляции дома по этим свечам'],
+  'bt.loading':     ['正在拉取历史 K 线…', 'Fetching candles…', '足を取得中…', '봉 데이터 불러오는 중…', 'Загрузка свечей…'],
+  'bt.badRange':    ['时间范围无效', 'Invalid time range', '期間が不正です', '시간 범위가 올바르지 않습니다', 'Неверный диапазон'],
+  'bt.tooLong':     ['最多支持 7 天', 'Maximum 7 days', '最大7日まで', '최대 7일', 'Максимум 7 дней'],
+  'bt.fail':        ['拉取失败，检查网络', 'Fetch failed — check your network', '取得に失敗しました', '불러오기 실패', 'Ошибка загрузки'],
+  'bt.noData':      ['这段区间没有数据', 'No data in this range', 'この期間にデータがありません', '이 구간에 데이터가 없습니다', 'Нет данных в этом диапазоне'],
+  'bt.r1':          ['{0} 局有成交 · 流水 {1} · 共 {2} 个周期 · 价差 {3}%', '{0} rounds with bets · turnover {1} · {2} periods · spread {3}%', '{0} 回成立 · 出来高 {1} · 全 {2} 期間 · スプレッド {3}%', '{0}회 체결 · 거래액 {1} · 총 {2}구간 · 스프레드 {3}%', '{0} раундов · оборот {1} · {2} периодов · спред {3}%'],
+  'bt.r2':          ['期望 {0} · 实际 {1} · 抽水 {2}% · 存活 {3}/{4} · 平均情绪 {5}', 'expected {0} · actual {1} · rake {2}% · alive {3}/{4} · mood {5}', '期待 {0} · 実際 {1} · レーキ {2}% · 生存 {3}/{4} · ムード {5}', '기대 {0} · 실제 {1} · 레이크 {2}% · 생존 {3}/{4} · 심리 {5}', 'ожидание {0} · факт {1} · рейк {2}% · живых {3}/{4} · настрой {5}']
 };
 
 function t(key) {
@@ -1843,12 +1883,14 @@ const BOTS = {
 
 function makeBot(i) {
   const r = Math.random();
+  const init = 200 + Math.random() * 800;
   return {
     id: i,
     style: r < 0.55 ? 'trend' : r < 0.85 ? 'fade' : 'noise',
     aggr: 0.5 + Math.random(),           // 注码倍数
     mood: 0.85 + Math.random() * 0.3,    // 情绪：决定还来不来
-    balance: 200 + Math.random() * 800,  // 本金
+    balance: init,                       // 当前本金
+    initBalance: init,                   // 初始本金（回测时重置用）
     pnl: 0, bets: 0, wins: 0, lossStreak: 0
   };
 }
@@ -1891,17 +1933,16 @@ function botPUp(b, streak, shown) {
   return clamp(p, 0.04, 0.96);
 }
 
-/* 开一局：所有玩家决定是否参与、押哪边、押多少 */
-function botRoundOpen(p0, fair) {
-  const shown = clamp(fair + BOTS.rig, 0.03, 0.97);
-  const half = BOTS.spread / 2;
+/* 让一批玩家在某一局下注（实时与回测共用） */
+function botPlaceBets(bots, p0, fair, spread, rig, streak) {
+  const shown = clamp(fair + rig, 0.03, 0.97);
+  const half = spread / 2;
   const priceUp = clamp(shown + half, 0.01, 0.99);
   const priceDown = clamp(1 - shown + half, 0.01, 0.99);
-  const streak = recentStreak();
 
   const r = { p0: p0, fair: fair, shown: shown, ts: Date.now(), bets: [], staked: 0 };
 
-  for (const b of BOTS.list) {
+  for (const b of bots) {
     if (b.balance < 20) continue;                     // 输光了就不来了
     const pJoin = clamp(0.62 * b.mood, 0.04, 0.95);   // 情绪越高，来得越勤
     if (Math.random() > pJoin) continue;
@@ -1913,26 +1954,18 @@ function botRoundOpen(p0, fair) {
     const amt = Math.min(b.balance, Math.max(10, base));
 
     b.balance -= amt;
-    const bet = {
+    r.bets.push({
       bot: b, dir: dir, cost: amt,
       price: price, shares: amt / price,
       fairSide: dir === 'up' ? fair : 1 - fair
-    };
-    r.bets.push(bet);
+    });
     r.staked += amt;
   }
-
-  BOTS.round = r;
-  botRender();
+  return r;
 }
 
-/* 结算一局：算庄家盈亏，更新每个玩家的余额与情绪 */
-function botRoundSettle(closePrice) {
-  const r = BOTS.round;
-  if (!r) return;
-  BOTS.round = null;
-  if (!r.bets.length) { botRender(); return; }
-
+/* 结算某一局，返回庄家盈亏（实时与回测共用） */
+function botSettleRound(r, closePrice, rebate) {
   const actualUp = closePrice > r.p0;
   let housePnl = 0, expPnl = 0;
 
@@ -1959,8 +1992,8 @@ function botRoundSettle(closePrice) {
   }
 
   /* 返水：庄家把盈利的一部分还给玩家，换来他们继续来 */
-  if (housePnl > 0 && BOTS.rebate > 0) {
-    const back = housePnl * BOTS.rebate;
+  if (housePnl > 0 && rebate > 0) {
+    const back = housePnl * rebate;
     const per = back / r.bets.length;
     for (const bet of r.bets) {
       bet.bot.balance += per;
@@ -1968,18 +2001,134 @@ function botRoundSettle(closePrice) {
     }
     housePnl -= back;
   }
+  return { house: housePnl, exp: expPnl, staked: r.staked, n: r.bets.length };
+}
 
-  BOTS.housePnl += housePnl;
-  BOTS.expPnl += expPnl;
-  BOTS.turnover += r.staked;
+/* 实时：开一局 */
+function botRoundOpen(p0, fair) {
+  BOTS.round = botPlaceBets(BOTS.list, p0, fair, BOTS.spread, BOTS.rig, recentStreak());
+  botRender();
+}
+
+/* 实时：结算上一局 */
+function botRoundSettle(closePrice) {
+  const r = BOTS.round;
+  if (!r) return;
+  BOTS.round = null;
+  if (!r.bets.length) { botRender(); return; }
+
+  const s = botSettleRound(r, closePrice, BOTS.rebate);
+  BOTS.housePnl += s.house;
+  BOTS.expPnl += s.exp;
+  BOTS.turnover += s.staked;
   BOTS.rounds++;
-  BOTS.log.unshift({
-    ts: Date.now(), n: r.bets.length, staked: r.staked,
-    house: housePnl, mood: avgMood()
-  });
+  BOTS.log.unshift({ ts: Date.now(), n: s.n, staked: s.staked, house: s.house, mood: avgMood() });
   if (BOTS.log.length > 40) BOTS.log.length = 40;
 
   botRender();
+}
+
+/* =========================================================
+ *  历史回放：拿过去某段时间的 1m K 线，把庄家模拟重跑一遍
+ *  注意：历史时刻没有模型预测，公允概率一律按 0.5 处理
+ *  （1 分钟涨跌的先验本来就是五五开，这也让回测只反映价差和暗箱的效果）
+ * ======================================================= */
+async function fetchKlinesRange(from, to) {
+  const out = [];
+  let cur = from, guard = 0;
+  while (cur < to && guard++ < 80) {
+    const j = await restGet('/api/v3/klines?symbol=' + S.symbol
+      + '&interval=1m&limit=1000&startTime=' + cur + '&endTime=' + to);
+    if (!Array.isArray(j) || !j.length) break;
+    for (const k of j) out.push({ t: +k[0], o: +k[1], c: +k[4] });
+    cur = +j[j.length - 1][0] + 60000;
+    if (j.length < 1000) break;
+  }
+  return out;
+}
+
+/* 历史某个位置之前的连涨 / 连跌 */
+function streakAt(kl, i) {
+  let dir = 0, len = 0;
+  /* 第 i 根 K 线才刚开盘，还没收盘，所以只能从 i-1 往前数 */
+  for (let j = i - 1; j > 0; j--) {
+    const d = kl[j].c > kl[j - 1].c ? 1 : kl[j].c < kl[j - 1].c ? -1 : 0;
+    if (d === 0) break;
+    if (dir === 0) { dir = d; len = 1; }
+    else if (d === dir) len++;
+    else break;
+  }
+  return { dir: dir, len: Math.min(len, 6) };
+}
+
+function fmtNum(v) {
+  return Math.round(v).toLocaleString('en-US');
+}
+
+async function botBacktest() {
+  const fv = $('#btFrom').value, tv = $('#btTo').value;
+  const res = $('#btRes'), btn = $('#btRun');
+  if (!fv || !tv) { res.textContent = t('bt.badRange'); return; }
+
+  const from = new Date(fv).getTime(), to = new Date(tv).getTime();
+  if (!(to > from)) { res.textContent = t('bt.badRange'); return; }
+  if (to - from > 7.2 * 86400000) { res.textContent = t('bt.tooLong'); return; }
+
+  btn.disabled = true;
+  res.textContent = t('bt.loading');
+
+  let kl;
+  try {
+    kl = await fetchKlinesRange(from, to);
+  } catch (e) {
+    res.textContent = t('bt.fail');
+    btn.disabled = false;
+    return;
+  }
+  if (kl.length < 20) {
+    res.textContent = t('bt.noData');
+    btn.disabled = false;
+    return;
+  }
+
+  const step = bucketMode ? Math.round(BUCKET_MS / 60000) : period;
+  const pms = step * 60000;
+
+  /* 克隆一份玩家：性格不变，余额和情绪重置，不动实时状态 */
+  const bots = BOTS.list.map(function (b) {
+    return Object.assign({}, b, {
+      balance: b.initBalance, mood: 1,
+      pnl: 0, bets: 0, wins: 0, lossStreak: 0
+    });
+  });
+
+  let rounds = 0, turnover = 0, house = 0, exp = 0, plays = 0;
+  for (let i = 0; i + step <= kl.length; i++) {
+    if (kl[i].t % pms !== 0) continue;
+    const o = kl[i], c = kl[i + step - 1];
+    const r = botPlaceBets(bots, o.o, 0.5, BOTS.spread, BOTS.rig, streakAt(kl, i));
+    rounds++;
+    if (!r.bets.length) continue;
+    const s = botSettleRound(r, c.c, BOTS.rebate);
+    plays++;
+    turnover += s.staked;
+    house += s.house;
+    exp += s.exp;
+  }
+
+  const alive = bots.filter(b => b.balance >= 20).length;
+  let moodSum = 0;
+  for (const b of bots) moodSum += b.mood;
+  const rake = turnover > 0 ? house / turnover * 100 : 0;
+
+  res.innerHTML = '<div class="bt-line">'
+    + t('bt.r1', fmtNum(plays), fmtNum(turnover), rounds, (BOTS.spread * 100).toFixed(1))
+    + '</div><div class="bt-line">'
+    + t('bt.r2', (exp >= 0 ? '+' : '') + fmtNum(exp), (house >= 0 ? '+' : '') + fmtNum(house),
+        rake.toFixed(2), alive, BOTS.list.length, (moodSum / BOTS.list.length * 100).toFixed(0))
+    + '</div>';
+
+  btn.disabled = false;
 }
 
 function avgMood() {
@@ -3120,6 +3269,19 @@ $('#botN').querySelectorAll('button').forEach(function (b) {
     BOTS.n = +b.dataset.n;
     $('#botN').querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); });
     botsInit();
+
+/* 历史回放默认填最近 24 小时 */
+(function () {
+  const p2 = n => String(n).padStart(2, '0');
+  const fmtLocal = ms => {
+    const d = new Date(ms);
+    return d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate())
+      + 'T' + p2(d.getHours()) + ':' + p2(d.getMinutes());
+  };
+  const now = Date.now();
+  if ($('#btTo')) $('#btTo').value = fmtLocal(now);
+  if ($('#btFrom')) $('#btFrom').value = fmtLocal(now - 24 * 3600 * 1000);
+})();
   });
 });
 $('#botSpread').addEventListener('input', function () {
@@ -3135,6 +3297,9 @@ $('#botRig').addEventListener('input', function () {
   BOTS.rig = +this.value / 100;
   $('#botRigV').textContent = (+this.value).toFixed(1) + 'pt';
 });
+
+/* 历史回放 */
+$('#btRun').addEventListener('click', botBacktest);
 
 /* 图表时间周期切换 */
 document.querySelectorAll('#tfSeg button').forEach(function (b) {
@@ -3252,6 +3417,19 @@ applyI18n();
 loadCoinModels();
 simLoad();
 botsInit();
+
+/* 历史回放默认填最近 24 小时 */
+(function () {
+  const p2 = n => String(n).padStart(2, '0');
+  const fmtLocal = ms => {
+    const d = new Date(ms);
+    return d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate())
+      + 'T' + p2(d.getHours()) + ':' + p2(d.getMinutes());
+  };
+  const now = Date.now();
+  if ($('#btTo')) $('#btTo').value = fmtLocal(now);
+  if ($('#btFrom')) $('#btFrom').value = fmtLocal(now - 24 * 3600 * 1000);
+})();
 setCoinMeta(S.symbol);
 buildCoinSeg();
 $('#langSel').value = lang;
