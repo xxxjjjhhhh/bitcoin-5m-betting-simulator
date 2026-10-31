@@ -44,6 +44,17 @@
 | **买涨跌** | 二元合约模拟盘：实时价格曲线、结算倒计时、买涨/买跌、赔率与期望值、庄家账本 |
 | **庄家** | 庄家模拟器：10/50/100 个虚拟散户、行为偏差模型、情绪系统、返水与暗箱、历史回放 |
 
+### 为什么好玩
+
+不用真钱，但**该有的刺激一个都不少**：
+
+- **押注**：选方向、选金额，看着赔率随盘口跳动，按下去那一刻的期待感是真的。
+- **瞬间爆仓**：把金额拉到 MAX 全押一边，一分钟后反向 —— 余额直接归零。这种感觉在真实市场里要花真金白银才能买到，这里免费，而且可以重来。
+- **被抽水磨死**：连续玩几十局，你会清楚看到余额不是被某一次大亏吃掉的，而是被每笔 1% 的价差一点点磨光的。
+- **反过来当庄家**：切到「庄家」页，站到抽水的那一侧，看 50 个虚拟散户怎么把钱输给你 —— 或者在你把暗箱偏移调高之后，怎么一个个跑光。
+
+零成本、零风险，但得出的结论是真的。
+
 ### 能玩出什么
 
 - **看价差怎么吃掉你**：每笔交易付 1% 价差，玩几十局后余额明显下滑，哪怕方向猜得还行。
@@ -99,6 +110,17 @@ It is not meant to be traded on. It is meant to show you, first-hand, why most p
 | **Market** | Candlestick chart (7 timeframes) + prediction panel + 8-factor breakdown + auto-settled stats |
 | **Trade** | Binary-contract paper trading: live price curve, settlement countdown, buy up/down, odds & expected value, house ledger |
 | **House** | House simulator: 10/50/100 virtual retail players, behavioural-bias models, mood system, rebate & hidden skew, historical replay |
+
+### Why it's fun
+
+No real money, but **none of the thrill is missing**:
+
+- **Placing a bet**: pick a side, pick an amount, watch the odds tick with the book, and feel that moment of anticipation as you click.
+- **Instant liquidation**: slide the stake to MAX, put it all on one side, and watch it go the other way a minute later — balance straight to zero. In a real market that feeling costs real money; here it is free, and you can start over.
+- **Ground down by the rake**: play a few dozen rounds and you will see plainly that the balance was not killed by one big loss, but worn away by 1% of spread on every single trade.
+- **Switch to the house side**: open the House page and stand on the raking end instead — watch 50 virtual retail players hand you their money, or watch them all leave once you crank up the hidden skew.
+
+Zero cost, zero risk, real conclusions.
 
 ### Things you can discover
 
