@@ -45,8 +45,19 @@
     background-size:56px 56px;
     mask-image:radial-gradient(ellipse at 50% 0%,#000 20%,transparent 78%);
   }
-  #app{position:relative;z-index:1;max-width:1500px;margin:0 auto;padding:16px 20px 36px;display:flex;flex-direction:column;gap:13px}
+  #app{position:relative;z-index:1;max-width:1500px;margin:0 auto;padding:16px 20px 62px;display:flex;flex-direction:column;gap:13px}
   [hidden]{display:none!important}
+
+  /* ---------- 免责声明（常驻底部） ---------- */
+  .disclaimer{position:fixed;left:0;right:0;bottom:0;z-index:45;display:flex;align-items:center;gap:10px;
+    padding:8px 20px;background:rgba(74,27,12,.95);border-top:1px solid rgba(240,185,11,.4);
+    backdrop-filter:blur(12px);font-size:11.5px;line-height:1.5;color:#ffcf9e}
+  .disclaimer .dc-badge{flex:none;width:19px;height:19px;border-radius:50%;display:grid;place-items:center;
+    font-size:12px;font-weight:700;background:rgba(240,185,11,.2);color:var(--gold);
+    border:1px solid rgba(240,185,11,.5)}
+  .disclaimer .dc-body{display:flex;gap:9px;align-items:baseline;flex-wrap:wrap;min-width:0}
+  .disclaimer b{color:var(--gold);font-weight:650;white-space:nowrap}
+  .disclaimer span{color:rgba(255,207,158,.8)}
 
   /* ---------- 页面切换 ---------- */
   .pagetabs{display:flex;gap:3px;padding:4px;border-radius:13px;background:var(--panel);
@@ -943,6 +954,8 @@ const DICT = {
   'f.sigma':        ['剩余波动', 'Volatility left', '残りボラ', '남은 변동성', 'Остаточная волатильность'],
   'f.z':            ['标准分 z', 'z-score', 'zスコア', 'z 점수', 'z-оценка'],
   'bucket.len':     ['区间长度', 'Interval length', '区間の長さ', '구간 길이', 'Длина интервала'],
+  'disc.title':     ['不构成投资建议', 'Not investment advice', '投資助言ではありません', '투자 조언이 아닙니다', 'Не инвестиционная рекомендация'],
+  'disc.text':      ['本工具仅供技术研究与学习。加密资产波动极大，任何盈亏与作者无关，请自行承担全部风险。', 'For technical research and learning only. Crypto assets are extremely volatile — any profit or loss is unrelated to the author. Use entirely at your own risk.', '本ツールは技術研究・学習目的です。暗号資産は極めて変動が大きく、損益は作者と無関係です。自己責任でご利用ください。', '본 도구는 기술 연구 및 학습용입니다. 암호자산은 변동성이 매우 크며, 손익은 작성자와 무관합니다. 모든 위험은 이용자 본인이 부담합니다.', 'Только для технического изучения. Криптоактивы крайне волатильны — прибыль или убыток не связаны с автором. Используйте на свой риск.'],
   'tab.market':     ['行情', 'Market', '相場', '시세', 'Рынок'],
   'tab.trade':      ['买涨跌', 'Trade', '売買', '매매', 'Торговля'],
   'tab.house':      ['庄家', 'House', 'ハウス', '하우스', 'Дом'],
@@ -1469,10 +1482,22 @@ function onDepth(d) {
   S.depth.asks = d.asks.slice(0, 20).map(x => [+x[0], +x[1]]);
 }
 
+/* 最近 2 分钟的逐笔价格，供买涨跌页画 60 秒滚动曲线。
+   1 分钟 K 线粒度太粗，画不出「最近一分钟」的细节，所以单独存一份 */
+const PRICE_HIST = [];
+function pushPriceHist(t, p) {
+  const last = PRICE_HIST[PRICE_HIST.length - 1];
+  if (last && last.p === p && t - last.t < 900) return;   // 同价 900ms 内不重复记
+  PRICE_HIST.push({ t: t, p: p });
+  const cutoff = t - 150000;
+  while (PRICE_HIST.length > 2 && PRICE_HIST[0].t < cutoff) PRICE_HIST.shift();
+}
+
 function updatePrice(p) {
   if (!p || p === S.price) return;
   S.prevPrice = S.price;
   S.price = p;
+  pushPriceHist(Date.now(), p);
   updateLastBar(p);
   const el = $('#price');
   el.textContent = fmtPrice(p);
@@ -1982,33 +2007,39 @@ function drawSimChart() {
     return;
   }
 
-  /* 时间窗：区间模式用当前区间的起止，其余用「结算点往前推一个周期」 */
-  const t0 = bucketMode && bk ? bk.start : (st.t - period * 60000);
-  const t1 = bucketMode && bk ? bk.end : st.t;
+  /* 只看最近 60 秒，用逐笔价格历史而不是 1 分钟 K 线 */
+  const now = Date.now();
+  const t1 = now;
+  const t0 = now - 60000;
 
-  /* 区间起点 → 区间内已收盘 K 线 → 当前实时价。
-     从起点画起，否则区间刚开时只有一个点，图上会是空的 */
-  const pts = [{ t: t0, p: base }];
-  const cs = S.candles;
-  for (let i = 0; i < cs.length; i++) {
-    if (cs[i].t >= t0 && cs[i].t < t1) pts.push({ t: cs[i].t + 60000, p: cs[i].c });
+  const pts = [];
+  for (const q of PRICE_HIST) {
+    if (q.t >= t0 && q.t <= t1) pts.push(q);
   }
-  pts.push({ t: Math.min(Date.now(), t1), p: S.price });
+  if (!pts.length) {
+    pts.push({ t: t0, p: S.price }, { t: t1, p: S.price });
+  } else {
+    /* 窗口左侧补一个点，避免曲线从中间才开始 */
+    if (pts[0].t > t0 + 2500) pts.unshift({ t: t0, p: pts[0].p });
+    if (pts[pts.length - 1].t < t1 - 800) pts.push({ t: t1, p: S.price });
+  }
 
-  /* 价格范围：包含基准线，上下各留一点余量 */
-  let lo = base, hi = base;
+  /* 纵向范围只看窗口内的价格，不把区间开盘价算进来 ——
+     否则基准价离得远时整条曲线会被压扁 */
+  let lo = Infinity, hi = -Infinity;
   for (const q of pts) {
     if (q.p < lo) lo = q.p;
     if (q.p > hi) hi = q.p;
   }
-  const padY = Math.max((hi - lo) * 0.28, base * 0.0004);
+  const padY = Math.max((hi - lo) * 0.22, base * 0.00006);
   lo -= padY; hi += padY;
 
   const padL = 6, padR = 68, padT = 12, padB = 20;
   const plotW = W - padL - padR, plotH = H - padT - padB;
   const X = tt => padL + (tt - t0) / (t1 - t0) * plotW;
   const Y = v => padT + (hi - v) / (hi - lo) * plotH;
-  const y0 = Y(base);
+  /* 基准线超出窗口范围时贴边画，保留参照但不压缩图形 */
+  const y0 = clamp(Y(base), padT, padT + plotH);
 
   /* 水平参考线 */
   ctx.strokeStyle = 'rgba(255,255,255,.05)';
@@ -2074,26 +2105,23 @@ function drawSimChart() {
   ctx.fillStyle = curUp ? '#16c784' : '#ff4d5e';
   ctx.fill();
 
-  /* 右侧价格刻度，基准价标签避开上下两个端点 */
+  /* 右侧价格刻度（基准价在顶部 meta 行已有，这里不重复标） */
   ctx.font = '10px ui-monospace, monospace';
   ctx.textAlign = 'left';
-  const hiY = padT + 4, loY = padT + plotH;
-  let baseY = y0 + 3.5;
-  if (Math.abs(baseY - hiY) < 13) baseY = hiY + 13;
-  if (Math.abs(baseY - loY) < 13) baseY = loY - 13;
-
   ctx.fillStyle = 'rgba(139,150,168,.7)';
-  ctx.fillText(fmtPrice(hi - padY), padL + plotW + 7, hiY);
-  ctx.fillText(fmtPrice(lo + padY), padL + plotW + 7, loY);
-  ctx.fillStyle = 'rgba(240,185,11,.85)';
-  ctx.fillText(fmtPrice(base), padL + plotW + 7, baseY);
+  ctx.fillText(fmtPrice(hi - padY), padL + plotW + 7, padT + 4);
+  ctx.fillText(fmtPrice(lo + padY), padL + plotW + 7, padT + plotH);
 
-  /* 底部时间刻度 */
+  /* 底部时间刻度：分:秒，左边是窗口起点，右边是现在 */
+  const mmss = ts => {
+    const d = new Date(ts);
+    return pad2(d.getMinutes()) + ':' + pad2(d.getSeconds());
+  };
   ctx.fillStyle = 'rgba(139,150,168,.55)';
   ctx.textAlign = 'left';
-  ctx.fillText(hhmm(t0), padL, H - 6);
+  ctx.fillText(mmss(t0), padL, H - 6);
   ctx.textAlign = 'right';
-  ctx.fillText(hhmm(t1), padL + plotW, H - 6);
+  ctx.fillText(mmss(t1), padL + plotW, H - 6);
 }
 
 function simRenderQuote() {
@@ -4033,5 +4061,14 @@ bootstrap().then(function () {
 tick();
 })();
 </script>
+
+<!-- 免责声明：常驻页面底部，不可关闭 -->
+<div class="disclaimer" role="note">
+  <span class="dc-badge">!</span>
+  <div class="dc-body">
+    <b data-i18n="disc.title">不构成投资建议</b>
+    <span data-i18n="disc.text">本工具仅供技术研究与学习。加密资产波动极大，任何盈亏与作者无关，请自行承担全部风险。</span>
+  </div>
+</div>
 </body>
 </html>

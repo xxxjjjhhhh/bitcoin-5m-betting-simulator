@@ -1,11 +1,7 @@
 # 忽略大文件与临时产物
 
-# 原始行情数据（单币 30-40MB，可用 model/fetch_data.js 重新拉取）
-model/*.csv
-model/data/
-
-# 训练产物中的二进制模型（体积大，且可由 train.py 重新生成）
-model/*.joblib
+# 模型与训练管线不公开：包含训练好的权重、校准曲线、原始行情和分析脚本
+model/
 
 # Python 缓存
 __pycache__/
@@ -16,6 +12,7 @@ venv/
 # 临时测试文件
 _*.png
 _*.js
+_*.html
 _chk.js
 
 # 系统文件
