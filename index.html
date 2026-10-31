@@ -1926,10 +1926,11 @@ function simReset() {
 }
 
 /* 渲染：报价（高频，tick 里调用） */
-/* 价格差值格式化：按数量级选小数位，避免小差值被显示成 0.00 */
-function fmtDiff(v) {
-  const a = Math.abs(v);
-  const d = a >= 1 ? 2 : a >= 0.01 ? 4 : 6;
+/* 差值的小数位跟随价格量级（BTC 两位、DOGE 五位），
+   否则区间刚开时会显示成 +0.000000 一串零 */
+function fmtDiff(v, ref) {
+  const r = Math.abs(ref) || 1;
+  const d = r >= 1000 ? 2 : r >= 100 ? 3 : r >= 1 ? 4 : r >= 0.01 ? 5 : 6;
   return v.toFixed(d);
 }
 
@@ -1960,7 +1961,7 @@ function simRenderChartHead() {
   pEl.style.color = up ? 'var(--up)' : 'var(--down)';
 
   dEl.className = 'sc-diff ' + (diff === 0 ? '' : up ? 'up' : 'down');
-  dEl.textContent = (up ? '+' : '') + fmtDiff(diff)
+  dEl.textContent = (up ? '+' : '') + fmtDiff(diff, base)
     + '  (' + (up ? '+' : '') + pct.toFixed(3) + '%)';
 
   /* 结算倒计时 + 本轮进度条，最后 30 秒转红 */
