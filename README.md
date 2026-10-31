@@ -1,6 +1,6 @@
 # Crypto Direction Predictor
 
-**在线体验 · Live demo → https://xxxjjjhhhh.github.io/BitcoinPredictor/**
+**在线体验 · Live demo → https://xxxjjjhhhh.github.io/bitcoin-5m-betting-simulator/**
 
 [简体中文](#简体中文) · [English](#english)
 
@@ -74,8 +74,8 @@
 ### 本地运行
 
 ```bash
-git clone https://github.com/xxxjjjhhhh/BitcoinPredictor.git
-cd BitcoinPredictor
+git clone https://github.com/xxxjjjhhhh/bitcoin-5m-betting-simulator.git
+cd bitcoin-5m-betting-simulator
 ```
 
 双击 `启动.bat`（自动起本地服务并用无地址栏窗口打开），或直接用浏览器打开 `index.html`。
@@ -141,8 +141,8 @@ Zero cost, zero risk, real conclusions.
 ### Run locally
 
 ```bash
-git clone https://github.com/xxxjjjhhhh/BitcoinPredictor.git
-cd BitcoinPredictor
+git clone https://github.com/xxxjjjhhhh/bitcoin-5m-betting-simulator.git
+cd bitcoin-5m-betting-simulator
 ```
 
 Double-click `启动.bat` (starts a local server and opens a chrome-less window), or just open `index.html` in a browser.

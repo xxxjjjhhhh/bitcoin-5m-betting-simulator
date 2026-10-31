@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BTC 一分钟涨跌预测</title>
+<title>比特币五分钟涨跌投注模拟器</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>₿</text></svg>">
 <style>
   :root{
@@ -397,7 +397,7 @@
     <div class="brand">
       <div class="logo">₿</div>
       <div>
-        <h1 id="appTitle">BTC 一分钟涨跌预测</h1>
+        <h1 id="appTitle">比特币五分钟涨跌投注模拟器</h1>
         <div class="sub" data-i18n="app.sub">实时盘口 · 多因子模型 · 自动结算回测</div>
       </div>
     </div>
@@ -845,9 +845,9 @@ const LANGS = ['zh', 'en', 'ja', 'ko', 'ru'];
 let lang = 'zh';
 
 const DICT = {
-  'app.title':      ['{0} 一分钟涨跌预测', '{0} 1-Minute Forecast', '{0} 1分足 方向予測', '{0} 1분 방향 예측', '{0} прогноз на 1 минуту'],
+  'app.title':      ['比特币五分钟涨跌投注模拟器', 'Bitcoin 5-Minute Betting Simulator', 'ビットコイン5分売買シミュレーター', '비트코인 5분 베팅 시뮬레이터', 'Симулятор ставок на биткоин · 5 минут'],
   'app.sub':        ['实时盘口 · 多因子模型 · 自动结算回测', 'Live order book · Multi-factor model · Auto-settled backtest', 'リアルタイム板 · 多要素モデル · 自動決済バックテスト', '실시간 호가 · 다중 팩터 모델 · 자동 결산 백테스트', 'Стакан в реальном времени · Мультифакторная модель · Авто-расчёт'],
-  'app.titleSuffix':['涨跌预测', 'Forecast', '予測', '예측', 'прогноз'],
+  'app.titleSuffix':['五分钟投注模拟器', '5-Min Betting Sim', '5分売買シミュレーター', '5분 베팅 시뮬레이터', 'симулятор ставок 5 мин'],
   'hdr.high':       ['24H 最高', '24H High', '24時間 高値', '24시간 최고', 'Максимум 24ч'],
   'hdr.low':        ['24H 最低', '24H Low', '24時間 安値', '24시간 최저', 'Минимум 24ч'],
   'hdr.vol':        ['24H 成交', '24H Volume', '24時間 出来高', '24시간 거래량', 'Объём 24ч'],
@@ -1504,7 +1504,7 @@ function updatePrice(p) {
   el.classList.remove('flash-up', 'flash-down');
   void el.offsetWidth;
   el.classList.add(p > S.prevPrice ? 'flash-up' : 'flash-down');
-  document.title = fmtPrice(p) + ' · BTC 预测';
+  document.title = fmtPrice(p) + ' · ' + t('app.titleSuffix');
 }
 
 /* =========================================================
@@ -3914,7 +3914,7 @@ function setCoinMeta(sym) {
   const el = $('#chartSym');
   if (el) el.textContent = c.base + '/USDT';
   const ttl = $('#appTitle');
-  if (ttl) ttl.textContent = t('app.title', c.base);
+  if (ttl) ttl.textContent = t('app.title');
 }
 
 function buildCoinSeg() {
