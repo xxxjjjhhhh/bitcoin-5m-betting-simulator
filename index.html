@@ -2055,26 +2055,45 @@ function drawSimChart() {
   ctx.beginPath(); ctx.moveTo(padL, y0); ctx.lineTo(padL + plotW, y0); ctx.stroke();
   ctx.setLineDash([]);
 
-  /* 折线 + 面积，按基准线上下分段着色 */
+  /* 折线 + 面积，按基准线上下分段着色。
+     用中点二次贝塞尔平滑，避免逐笔价格造成锯齿状阶梯 */
+  function tracePath() {
+    ctx.beginPath();
+    ctx.moveTo(X(pts[0].t), Y(pts[0].p));
+    for (let i = 1; i < pts.length - 1; i++) {
+      const xc = (X(pts[i].t) + X(pts[i + 1].t)) / 2;
+      const yc = (Y(pts[i].p) + Y(pts[i + 1].p)) / 2;
+      ctx.quadraticCurveTo(X(pts[i].t), Y(pts[i].p), xc, yc);
+    }
+    const lp = pts[pts.length - 1];
+    ctx.lineTo(X(lp.t), Y(lp.p));
+  }
+
   function paint(col, fillCol) {
+    const xEnd = X(pts[pts.length - 1].t);
     ctx.beginPath();
     ctx.moveTo(X(pts[0].t), y0);
-    for (const q of pts) ctx.lineTo(X(q.t), Y(q.p));
-    ctx.lineTo(X(pts[pts.length - 1].t), y0);
+    ctx.lineTo(X(pts[0].t), Y(pts[0].p));
+    for (let i = 1; i < pts.length - 1; i++) {
+      const xc = (X(pts[i].t) + X(pts[i + 1].t)) / 2;
+      const yc = (Y(pts[i].p) + Y(pts[i + 1].p)) / 2;
+      ctx.quadraticCurveTo(X(pts[i].t), Y(pts[i].p), xc, yc);
+    }
+    ctx.lineTo(xEnd, Y(pts[pts.length - 1].p));
+    ctx.lineTo(xEnd, y0);
     ctx.closePath();
     ctx.fillStyle = fillCol;
     ctx.fill();
 
-    ctx.beginPath();
-    for (let i = 0; i < pts.length; i++) {
-      const px = X(pts[i].t), py = Y(pts[i].p);
-      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-    }
+    tracePath();
     ctx.strokeStyle = col;
     ctx.lineWidth = 2;
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
+    ctx.shadowColor = col === '#16c784' ? 'rgba(22,199,132,.45)' : 'rgba(255,77,94,.45)';
+    ctx.shadowBlur = 7;
     ctx.stroke();
+    ctx.shadowBlur = 0;
   }
 
   const topH = Math.max(0, y0 - padT);
@@ -3476,6 +3495,8 @@ function tick() {
     simStep();
     simRenderQuote();
     if (curPage === 'trade') {
+      /* 价格不变时也定时补点，让 60 秒曲线保持连续 */
+      if (S.price) pushPriceHist(now, S.price);
       simRenderChartHead();
       drawSimChart();
     }
