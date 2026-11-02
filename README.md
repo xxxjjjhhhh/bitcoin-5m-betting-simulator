@@ -41,7 +41,7 @@
 | 页面 | 内容 |
 |---|---|
 | **行情** | K 线图（7 档周期）+ 预测面板 + 8 因子拆解 + 自动结算统计 |
-| **买涨跌** | 二元合约模拟盘：实时价格曲线、结算倒计时、买涨/买跌、赔率与期望值、庄家账本 |
+| **买涨跌** | 二元合约模拟盘：实时价格曲线、结算倒计时、买涨/买跌/**插针**、赔率与期望值、庄家账本 |
 | **庄家** | 庄家模拟器：10/50/100 个虚拟散户、行为偏差模型、情绪系统、返水与暗箱、历史回放 |
 
 ### 为什么好玩
@@ -54,6 +54,16 @@
 - **反过来当庄家**：切到「庄家」页，站到抽水的那一侧，看 50 个虚拟散户怎么把钱输给你 —— 或者在你把暗箱偏移调高之后，怎么一个个跑光。
 
 零成本、零风险，但得出的结论是真的。
+
+### 插针与「该不该接针」
+
+买涨跌页多了一档玩法：**赌这个 5 分钟区间会不会被扎一针**，以及**扎了之后该不该接**。
+
+- **插针线**：`2.0 × 每分钟波动`，区间开盘时冻结。区间内任意 30 秒窗口的振幅越过它就算插针，上下都算。
+- **赔率**：单窗口概率用幂律拟合（正态分布在尾部会低估两个数量级），再按剩余时间累计。用 100 个真实区间标定，实测命中率 18%，模型 17.6%。
+- **触发即收盘**：事件已经发生就不能再买，否则是白送钱。
+- **立即判断**：随时点一下，用当前区间的量能、回吐、针尖距 15m 支撑的距离、1h 趋势给出四档结论（激进接针 / 等待二次确认 / 严禁接针 / 暂无插针）。
+- **复制给 AI**：把上面这些真实数据填进一份完整的分析提示词，一键复制，粘给任意大模型继续深挖。
 
 ### 能玩出什么
 
@@ -108,7 +118,7 @@ It is not meant to be traded on. It is meant to show you, first-hand, why most p
 | Page | Contents |
 |---|---|
 | **Market** | Candlestick chart (7 timeframes) + prediction panel + 8-factor breakdown + auto-settled stats |
-| **Trade** | Binary-contract paper trading: live price curve, settlement countdown, buy up/down, odds & expected value, house ledger |
+| **Trade** | Binary-contract paper trading: live price curve, settlement countdown, buy up/down/**wick**, odds & expected value, house ledger |
 | **House** | House simulator: 10/50/100 virtual retail players, behavioural-bias models, mood system, rebate & hidden skew, historical replay |
 
 ### Why it's fun
@@ -121,6 +131,16 @@ No real money, but **none of the thrill is missing**:
 - **Switch to the house side**: open the House page and stand on the raking end instead — watch 50 virtual retail players hand you their money, or watch them all leave once you crank up the hidden skew.
 
 Zero cost, zero risk, real conclusions.
+
+### Wicks — and whether to catch them
+
+The Trade page has one more market: **bet on whether this 5-minute interval gets wicked**, and **once it does, whether to catch it**.
+
+- **Wick line**: `2.0 × per-minute volatility`, frozen when the interval opens. Any 30-second window whose range crosses it counts as a wick — either direction.
+- **Odds**: single-window probability fitted as a power law (a normal distribution understates the tail by two orders of magnitude), then compounded over the remaining time. Calibrated on 100 real intervals: 18% observed, 17.6% modelled.
+- **Closes on trigger**: once the wick happens the market shuts, otherwise buying at 0.99 would be free money.
+- **Judge now**: one click, any time, scores volume, retrace, distance from the tip to 15m support, and the 1h trend into one of four verdicts (catch it / wait for retest / do not catch / no wick yet).
+- **Copy for AI**: fills all of the above into a complete analysis prompt and copies it, ready to paste into any model.
 
 ### Things you can discover
 

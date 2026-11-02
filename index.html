@@ -269,14 +269,47 @@
   .sim-amt button:hover{color:var(--gold);border-color:rgba(240,185,11,.4)}
   .sim-amt button.urgent{color:var(--gold);border-color:rgba(240,185,11,.55);
     background:rgba(240,185,11,.14);animation:pulse 1.8s infinite}
-  .sim-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .sim-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .sim-actions.two{grid-template-columns:1fr 1fr}
+  .sim-actions.two .sim-spike{display:none}
   .sim-actions button{border:0;border-radius:9px;padding:7px 0;font-size:12px;font-weight:650;cursor:pointer;
     font-family:inherit;color:#0a0c11;transition:.15s}
   .sim-actions button i{display:block;font-style:normal;font-size:10px;font-weight:500;opacity:.82;margin-top:1px}
   .sim-up{background:linear-gradient(180deg,#22d894,#16c784)}
   .sim-down{background:linear-gradient(180deg,#ff6b7a,#ff4d5e)}
+  .sim-spike{background:linear-gradient(180deg,#ffd75e,#f0b90b)}
   .sim-actions button:hover{filter:brightness(1.08)}
   .sim-actions button:disabled{opacity:.38;cursor:not-allowed;filter:none}
+
+  /* 插针诊断条：平时只有一行振幅进度，触发后展开成诊断卡 */
+  .spk{margin:0 16px 11px;padding:8px 11px;border-radius:10px;
+    border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.022);
+    font-size:11px;color:var(--dim2);transition:border-color .3s,background .3s}
+  .spk.hit{border-color:rgba(240,185,11,.34);
+    background:linear-gradient(90deg,rgba(240,185,11,.10),rgba(240,185,11,.015))}
+  .spk-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .spk-row .k{letter-spacing:.3px}
+  .spk-row b{color:var(--dim);font-variant-numeric:tabular-nums;font-weight:600}
+  .spk-bar{flex:1;min-width:70px;height:5px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden}
+  .spk-bar i{display:block;height:100%;width:0;border-radius:3px;transition:width .3s;
+    background:linear-gradient(90deg,rgba(240,185,11,.5),#f0b90b)}
+  .spk-bar i.hit{background:linear-gradient(90deg,#f0b90b,#ff4d5e)}
+  .spk-tag{padding:1px 7px;border-radius:6px;background:rgba(255,255,255,.06);
+    color:var(--dim2);font-size:10px;white-space:nowrap}
+  .spk-tag.hit{background:rgba(240,185,11,.18);color:var(--gold);font-weight:600}
+  .spk-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:9px 0 7px}
+  .spk-grid div{min-width:0}
+  .spk-grid span{display:block;font-size:9.5px;letter-spacing:.4px;color:var(--dim2);margin-bottom:2px}
+  .spk-grid b{font-size:12.5px;color:var(--dim);font-variant-numeric:tabular-nums}
+  .spk-grid b.g{color:var(--good)}.spk-grid b.r{color:var(--bad)}
+  .spk-verdict{display:flex;align-items:flex-start;gap:9px;font-size:11px;line-height:1.55;color:var(--dim)}
+  .spk-verdict em{font-style:normal;font-weight:700;padding:1px 8px;border-radius:6px;white-space:nowrap}
+  .spk-verdict em.buy{background:rgba(22,199,132,.16);color:var(--up)}
+  .spk-verdict em.wait{background:rgba(240,185,11,.16);color:var(--gold)}
+  .spk-verdict em.avoid{background:rgba(255,77,94,.16);color:var(--down)}
+  .spk-copy{margin-left:auto;flex:none;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+    color:var(--dim);border-radius:7px;padding:3px 9px;font-size:10.5px;cursor:pointer;font-family:inherit}
+  .spk-copy:hover{border-color:rgba(240,185,11,.45);color:var(--gold)}
   .sim-hint{font-size:10px;color:var(--dim2);margin-top:7px;line-height:1.6;min-height:16px}
   .sim-tbl{width:100%;border-collapse:collapse;font-size:11.5px;table-layout:fixed}
   .sim-tbl th{text-align:left;font-weight:500;color:var(--dim2);font-size:10px;padding:0 10px 7px;white-space:nowrap}
@@ -367,6 +400,7 @@
   .tag{display:inline-block;padding:2.5px 8px;border-radius:6px;font-size:11px;font-weight:600}
   .tag.up{color:var(--up);background:rgba(22,199,132,.13)}
   .tag.down{color:var(--down);background:rgba(255,77,94,.13)}
+  .tag.spike{color:var(--gold);background:rgba(240,185,11,.14)}
   .tag.hit{color:var(--good);background:rgba(22,199,132,.13)}
   .tag.miss{color:var(--bad);background:rgba(255,77,94,.13)}
   .tag.flat{color:var(--dim);background:rgba(255,255,255,.08)}
@@ -554,6 +588,19 @@
       <div class="sc-meta" id="scMeta"></div>
       <canvas id="simChart"></canvas>
     </div>
+
+    <!-- 插针：区间内 30 秒窗口的急速穿刺，以及接针诊断 -->
+    <div class="spk" id="spk">
+      <div class="spk-row">
+        <span class="k" data-i18n="spk.title">插针</span>
+        <b id="spkRange">--</b>
+        <div class="spk-bar"><i id="spkFill"></i></div>
+        <span class="spk-tag" id="spkTag" data-i18n="spk.none">未触发</span>
+        <button class="spk-copy" id="spkJudge" data-i18n="spk.judge">立即判断</button>
+      </div>
+      <div id="spkBody" hidden></div>
+    </div>
+
     <div class="sim-body">
       <div class="sim-left">
         <div class="sim-acct">
@@ -580,6 +627,7 @@
         <div class="sim-actions">
           <button class="sim-up" id="simUp"><span data-i18n="sim.buyUp">买涨</span><i>--</i></button>
           <button class="sim-down" id="simDown"><span data-i18n="sim.buyDown">买跌</span><i>--</i></button>
+          <button class="sim-spike" id="simSpike"><span data-i18n="sim.buySpike">插针</span><i>--</i></button>
         </div>
         <div class="sim-hint" id="simHint"></div>
       </div>
@@ -966,6 +1014,51 @@ const DICT = {
   'sim.open':       ['待结算', 'Open', '未決済', '미결제', 'Открыто'],
   'sim.buyUp':      ['买涨', 'Buy UP', '上昇を買う', '상승 매수', 'Купить рост'],
   'sim.buyDown':    ['买跌', 'Buy DOWN', '下落を買う', '하락 매수', 'Купить падение'],
+  'sim.buySpike':   ['插针', 'Wick', 'ヒゲ', '꼬리', 'Шпилька'],
+  'dir.spike':      ['插针', 'Wick', 'ヒゲ', '꼬리', 'Шпилька'],
+  'spk.title':      ['插针', 'Wick', 'ヒゲ', '꼬리', 'Шпилька'],
+  'spk.range':      ['最大振幅', 'Max range', '最大振幅', '최대 진폭', 'Макс. размах'],
+  'spk.none':       ['未触发', 'Not hit', '未到達', '미발생', 'Не сработала'],
+  'spk.hit':        ['已插针', 'Hit', '到達', '발생', 'Сработала'],
+  'spk.waiting':    ['等待数据', 'Waiting', '待機中', '대기 중', 'Ожидание'],
+  'spk.judge':      ['立即判断', 'Judge now', '今すぐ判定', '즉시 판정', 'Оценить'],
+  'spk.hide':       ['收起', 'Hide', '閉じる', '접기', 'Скрыть'],
+  'spk.closed':     ['已收盘', 'Closed', '締切', '마감', 'Закрыто'],
+  'spk.vol':        ['量能', 'Volume', '出来高', '거래량', 'Объём'],
+  'spk.rec':        ['回吐', 'Retrace', '戻し', '되돌림', 'Откат'],
+  'spk.sup':        ['针尖距 15m 支撑', 'Tip vs 15m support', 'ヒゲ先と15m支持', '꼬리-15m 지지', 'Кончик к 15m поддержке'],
+  'spk.trend':      ['1h 趋势', '1h trend', '1h トレンド', '1h 추세', 'Тренд 1h'],
+  'spk.trendUp':    ['上行', 'up', '上昇', '상승', 'рост'],
+  'spk.trendDown':  ['下行', 'down', '下降', '하락', 'падение'],
+  'spk.vBuy':       ['激进接针', 'Catch it', '積極エントリー', '공격적 진입', 'Брать'],
+  'spk.vWait':      ['等待二次确认', 'Wait for retest', '再テスト待ち', '재테스트 대기', 'Ждать ретест'],
+  'spk.vAvoid':     ['严禁接针', 'Do not catch', 'エントリー禁止', '진입 금지', 'Не входить'],
+  'spk.vNone':      ['暂无插针', 'No wick yet', 'ヒゲ未形成', '꼬리 없음', 'Шпильки нет'],
+  'spk.vNoneWhy':   ['振幅还没到插针线，先别动，等它来',
+                     'Range has not reached the wick line — stand aside',
+                     '振幅がヒゲ線に届いていない。待機',
+                     '진폭이 꼬리선에 못 미침. 대기',
+                     'Размах не дошёл до линии — подождите'],
+  'spk.vBuyWhy':    ['有量承接、针尖踩在支撑上，可小仓试多，止损放针尖下方 0.4%',
+                     'Volume-backed wick on support — small long, stop 0.4% below the tip',
+                     '出来高を伴い支持線上。小さく買い、損切りはヒゲ先の0.4%下',
+                     '거래량 동반 + 지지선. 소액 진입, 손절은 꼬리 아래 0.4%',
+                     'Объём и поддержка — небольшой лонг, стоп на 0.4% ниже кончика'],
+  'spk.vWaitWhy':   ['先等下一根 5m 缩量回踩不破针尖，再决定',
+                     'Wait for the next 5m to retest the tip on low volume',
+                     '次の5mが出来高減少でヒゲ先を割らないか確認',
+                     '다음 5m가 거래량 감소로 꼬리를 지키는지 확인',
+                     'Дождитесь ретеста кончика на низком объёме'],
+  'spk.vAvoidWhy':  ['无量或已破位，别接，反弹是离场机会',
+                     'No volume or support broken — skip it, the bounce is an exit',
+                     '出来高不足か支持線割れ。見送り、戻りは逃げ場',
+                     '거래량 부족 또는 지지 이탈. 진입 금지, 반등은 탈출 기회',
+                     'Нет объёма или пробой — не входить, отскок для выхода'],
+  'spk.copy':       ['复制给 AI', 'Copy for AI', 'AIにコピー', 'AI에 복사', 'Копировать для ИИ'],
+  'spk.copied':     ['提示词已复制，粘给任意 AI 即可', 'Prompt copied — paste into any AI',
+                     'コピーしました。任意のAIに貼り付け', '복사됨. 아무 AI에 붙여넣기', 'Скопировано — вставьте в любой ИИ'],
+  'spk.unavailable':['插针只在 5 分钟区间提供', 'Wick bets only in 5-minute rounds',
+                     'ヒゲは5分足のみ', '꼬리는 5분 구간만', 'Шпилька только в 5-мин раундах'],
   'sim.settleAt':   ['结算', 'Settles', '確定', '정산', 'Расчёт'],
   'sim.left':       ['结算剩余', 'Settles in', '決済まで', '정산까지', 'До расчёта'],
   'sim.fair':       ['模型公允价', 'Model fair', 'モデル適正価格', '모델 공정가', 'Справедливая цена'],
@@ -1474,6 +1567,7 @@ function onTrade(t) {
   while (S.trades.length && S.trades[0].ts < cut) S.trades.shift();
   if (S.trades.length > 4000) S.trades.splice(0, S.trades.length - 4000);
   updatePrice(p);
+  spikeFeed(Date.now(), p, q);      // 成交量单独喂，价格不变时也要记
 }
 
 function onDepth(d) {
@@ -1498,6 +1592,7 @@ function updatePrice(p) {
   S.prevPrice = S.price;
   S.price = p;
   pushPriceHist(Date.now(), p);
+  spikeFeed(Date.now(), p);
   updateLastBar(p);
   const el = $('#price');
   el.textContent = fmtPrice(p);
@@ -1596,6 +1691,9 @@ function computeBucket() {
   }
   if (open == null && S.cur && S.cur.t === start) open = S.cur.o;
   if (open == null || !S.price) return null;
+
+  /* 插针线在区间开盘时冻结，区间内不再变 */
+  spikeEnsure(start, open);
 
   const sig = rvEwma();
   if (!sig || sig <= 0) return null;
@@ -1761,7 +1859,8 @@ function houseState() {
   let settledN = 0, wins = 0, turnover = 0;
 
   for (const b of SIM.bets) {
-    const fairSide = b.dir === 'up' ? b.fair : 1 - b.fair;
+    /* 插针的报价本身就是概率，涨跌则要取反 */
+    const fairSide = b.dir === 'down' ? 1 - b.fair : b.fair;
     spread += b.cost - b.shares * fairSide;
     turnover += b.cost;
     if (b.settled) {
@@ -1770,7 +1869,8 @@ function houseState() {
       if (b.win !== null) { settledN++; if (b.win) wins++; }
     } else {
       openExp += b.shares * fairSide;
-      if (b.dir === 'up') shortUp += b.shares; else shortDown += b.shares;
+      if (b.dir === 'up') shortUp += b.shares;
+      else if (b.dir === 'down') shortDown += b.shares;
     }
   }
 
@@ -1823,14 +1923,429 @@ function simQuote() {
   const mid = clamp(SIM.mid + skew, 0.02, 0.98);
 
   const half = SIM.spread / 2;
+  const ps = spikeProb();
   return {
     fair: fair,
     mid: mid,
     base: SIM.mid,
     skew: skew,
     up: clamp(mid + half, 0.01, 0.99),
-    down: clamp(1 - mid + half, 0.01, 0.99)
+    down: clamp(1 - mid + half, 0.01, 0.99),
+    pSpike: ps,
+    spike: ps == null ? null : clamp(ps + half, 0.01, 0.99)
   };
+}
+
+/* =========================================================
+ *  插针：区间内的急速穿刺，以及「该不该接针」的诊断
+ *
+ *  判定：区间内任意 30 秒窗口的振幅 ≥ 插针线
+ *  插针线 = 2.0 × 每分钟波动，在区间开盘时冻结
+ *  （冻结是为了让同一区间内的赔率可交易，不随波动率漂移）
+ *
+ *  概率模型用真实 1 秒 K 线标定过（100 个 5 分钟区间，约 8 小时）：
+ *      单窗口  P_w ≈ 0.435 · x^-2.9 ，x = 插针线 / 30 秒波动
+ *      区间内  P = 1 − (1 − P_w)^(0.95 · 剩余秒数 / 30)
+ *  正态分布在 x≈3.5 时给出 0.08%，实测 1.1% —— 尾部厚两个数量级，
+ *  所以用幂律拟合，不用 Φ。实测区间命中率 18%，模型 17.6%。
+ * ======================================================= */
+const SPIKE_WIN = 30;        // 判定窗口（秒）
+const SPIKE_K = 2.0;         // 插针线 = K × 每分钟波动
+const SPIKE_C = 0.435;       // 幂律系数
+const SPIKE_A = 2.9;         // 幂律指数
+const SPIKE_NEFF = 0.95;     // 每 30 秒的有效独立窗口数
+
+const SPIKE = {
+  start: 0,                  // 当前区间起点
+  p0: null,                  // 区间开盘价
+  strike: null,              // 插针线（价格单位）
+  pct: 0,                    // 插针线（百分比）
+  map: new Map(),            // 秒级 K 线：t -> {t,h,l,c,v}
+  bars: null,
+  dirty: true,
+  cur: null,                 // 本区间最大振幅窗口
+  hit: null,                 // 已触发的插针
+  hits: {},                  // 按区间起点存命中，避免新区间重置后结算取不到
+  asked: 0,                  // 已回填的区间
+  ctx: null,                 // 15m/1h 上下文
+  ctxAt: 0,
+  open: false                // 诊断面板是否展开
+};
+
+function spikeBars() {
+  if (SPIKE.dirty) {
+    SPIKE.bars = Array.from(SPIKE.map.values()).sort(function (a, b) { return a.t - b.t; });
+    SPIKE.dirty = false;
+  }
+  return SPIKE.bars;
+}
+
+/* 区间切换：冻结插针线、清空秒级序列、回填历史 */
+function spikeEnsure(start, p0) {
+  if (SPIKE.start === start && SPIKE.strike) return;
+  SPIKE.start = start;
+  SPIKE.p0 = p0;
+  SPIKE.map = new Map();
+  SPIKE.bars = null;
+  SPIKE.dirty = true;
+  SPIKE.cur = null;
+  SPIKE.hit = null;
+  const sig = rvEwma();
+  SPIKE.pct = clamp((sig || 0.0008) * SPIKE_K, 0.0004, 0.006);
+  SPIKE.strike = p0 * SPIKE.pct;
+  spikeBackfill(start);
+  if (Date.now() - SPIKE.ctxAt > 180000) spikeCtxLoad();
+}
+
+/* 回填区间内已经过去的秒级 K 线：中途打开页面也能统计到前面的插针 */
+async function spikeBackfill(start) {
+  if (SPIKE.asked === start) return;
+  SPIKE.asked = start;
+  try {
+    const j = await restGet('/api/v3/klines?symbol=' + S.symbol
+      + '&interval=1s&startTime=' + start + '&limit=300');
+    if (SPIKE.start !== start || !Array.isArray(j)) return;
+    for (let i = 0; i < j.length; i++) {
+      const k = j[i], t = k[0];
+      if (t < start || t >= start + BUCKET_MS) continue;
+      const b = SPIKE.map.get(t);
+      if (!b) SPIKE.map.set(t, { t: t, h: +k[2], l: +k[3], c: +k[4], v: +k[5] });
+      else {
+        if (+k[2] > b.h) b.h = +k[2];
+        if (+k[3] < b.l) b.l = +k[3];
+        b.v = Math.max(b.v, +k[5]);
+      }
+    }
+    SPIKE.dirty = true;
+    spikeTick(true);
+    spikeRender();
+  } catch (e) {}
+}
+
+/* 逐笔喂进当前秒。v 是成交量，用于判断插针是不是「有量承接」 */
+function spikeFeed(t, p, v) {
+  if (!SPIKE.start || !SPIKE.strike) return;
+  if (t < SPIKE.start || t >= SPIKE.start + BUCKET_MS) return;
+  const k = Math.floor(t / 1000) * 1000;
+  const b = SPIKE.map.get(k);
+  if (!b) SPIKE.map.set(k, { t: k, h: p, l: p, c: p, v: v || 0 });
+  else {
+    if (p > b.h) b.h = p;
+    if (p < b.l) b.l = p;
+    b.c = p;
+    if (v) b.v = (b.v || 0) + v;
+  }
+  SPIKE.dirty = true;
+}
+
+/* 扫描区间内振幅最大的 30 秒窗口（单调队列，O(n)） */
+function spikeScan() {
+  const bars = spikeBars();
+  const n = bars.length;
+  if (n < 2) return null;
+  const w = SPIKE_WIN;
+  const dqH = [], dqL = [];
+  let best = null;
+  for (let i = 0; i < n; i++) {
+    while (dqH.length && bars[dqH[dqH.length - 1]].h <= bars[i].h) dqH.pop();
+    dqH.push(i);
+    while (dqL.length && bars[dqL[dqL.length - 1]].l >= bars[i].l) dqL.pop();
+    dqL.push(i);
+    while (dqH[0] <= i - w) dqH.shift();
+    while (dqL[0] <= i - w) dqL.shift();
+    const hiI = dqH[0], loI = dqL[0];
+    const mag = bars[hiI].h - bars[loI].l;
+    if (!best || mag > best.mag) {
+      best = {
+        mag: mag, hi: bars[hiI].h, lo: bars[loI].l,
+        hiI: hiI, loI: loI, at: bars[i].t,
+        dir: hiI >= loI ? 'up' : 'down',      // 高点在后 = 向上冲
+        i0: Math.max(0, i - w + 1), i1: i
+      };
+    }
+  }
+  return best;
+}
+
+let spikeLastAt = 0;
+function spikeTick(force) {
+  const now = Date.now();
+  if (!force && now - spikeLastAt < 400) return;
+  spikeLastAt = now;
+  if (!SPIKE.strike) return;
+  const s = spikeScan();
+  if (!s) return;
+  SPIKE.cur = s;
+  if (s.mag >= SPIKE.strike && !SPIKE.hit) {
+    SPIKE.hit = s;
+    SPIKE.hits[SPIKE.start] = s;
+    /* 只留最近 12 个区间，防止长期开着页面无限增长 */
+    const keys = Object.keys(SPIKE.hits).map(Number).sort(function (a, b) { return b - a; });
+    for (let i = 12; i < keys.length; i++) delete SPIKE.hits[keys[i]];
+  }
+}
+
+/* 概率：区间内至少出现一次插针。已经插针了就收盘，不再报价 */
+function spikeProb() {
+  if (!bucketMode || bucketMin !== 5) return null;
+  const st = simSettle();
+  if (!st || !SPIKE.strike) return null;
+  if (SPIKE.hit) return null;
+  const left = Math.max(0, (st.t - Date.now()) / 1000);
+  const sig = rvEwma();
+  if (!sig) return null;
+  const sigW = sig * Math.sqrt(SPIKE_WIN / 60);
+  const x = SPIKE.strike / (sigW * (S.price || SPIKE.p0));
+  const pw = clamp(SPIKE_C * Math.pow(x, -SPIKE_A), 0.002, 0.6);
+  const n = left / SPIKE_WIN * SPIKE_NEFF;
+  return clamp(1 - Math.pow(1 - pw, n), 0.02, 0.97);
+}
+
+/* ---------- 上下文：15m 支撑阻力、5m 近期走势、1h 趋势 ---------- */
+function emaOf(a, n) {
+  if (!a.length || a.length < n) return null;
+  const k = 2 / (n + 1);
+  let e = a[0];
+  for (let i = 1; i < a.length; i++) e = a[i] * k + e * (1 - k);
+  return e;
+}
+
+async function spikeCtxLoad() {
+  const sym = S.symbol;
+  SPIKE.ctxAt = Date.now();
+  try {
+    const r = await Promise.all([
+      restGet('/api/v3/klines?symbol=' + sym + '&interval=5m&limit=24'),
+      restGet('/api/v3/klines?symbol=' + sym + '&interval=15m&limit=48'),
+      restGet('/api/v3/klines?symbol=' + sym + '&interval=1h&limit=60')
+    ]);
+    if (S.symbol !== sym) return;
+    SPIKE.ctx = spikeBuildCtx(r[0], r[1], r[2]);
+  } catch (e) {}
+}
+
+function spikeBuildCtx(m5, m15, h1) {
+  /* 支撑阻力取「已收盘」的 15m 极值，排除正在走的这根，
+     否则插针的针尖会把自己算成支撑 */
+  const lows = [], highs = [];
+  for (let i = 0; i < m15.length - 1; i++) { lows.push(+m15[i][3]); highs.push(+m15[i][2]); }
+  const sup = lows.length ? Math.min.apply(null, lows.slice(-16)) : null;
+  const res = highs.length ? Math.max.apply(null, highs.slice(-16)) : null;
+
+  const c1h = h1.map(function (k) { return +k[4]; });
+  const e20 = emaOf(c1h, 20), e50 = emaOf(c1h, 50);
+
+  /* 前 3 根 5m 的涨跌方向 */
+  const prev = [];
+  for (let i = Math.max(0, m5.length - 4); i < m5.length - 1; i++) {
+    prev.push(+m5[i][4] >= +m5[i][1] ? 1 : -1);
+  }
+
+  return {
+    sup: sup, res: res,
+    trend: e20 != null && e50 != null ? (e20 >= e50 ? 'up' : 'down') : null,
+    trendPct: e20 != null && e50 != null ? (e20 / e50 - 1) * 100 : null,
+    prev: prev
+  };
+}
+
+/* ---------- 接针诊断 ---------- */
+function spikeDiag() {
+  const s = SPIKE.cur;
+  const px = S.price || SPIKE.p0;
+  if (!s || !px || !SPIKE.strike) return null;
+
+  const bars = spikeBars();
+  let vol = 0;
+  for (let i = s.i0; i <= s.i1 && i < bars.length; i++) vol += (bars[i].v || 0);
+
+  /* 基准量：最近 20 根 1 分钟均量折半，即 30 秒的常态量。
+     窗口只观测到几秒时要按秒数折算，否则区间刚开就被判成「无量」 */
+  let baseVol = 0, cnt = 0;
+  const cs = S.candles;
+  for (let i = Math.max(0, cs.length - 20); i < cs.length; i++) { baseVol += (cs[i].v || 0); cnt++; }
+  baseVol = cnt ? baseVol / cnt / 2 : 0;
+  const secs = Math.max(1, Math.min(SPIKE_WIN, s.i1 - s.i0 + 1));
+  const expect = baseVol * secs / SPIKE_WIN;
+  const volX = expect > 0 && vol > 0 ? vol / expect : null;
+
+  const ctx = SPIKE.ctx || {};
+  const tip = s.dir === 'up' ? s.hi : s.lo;
+  const supDist = ctx.sup ? (tip - ctx.sup) / px * 100 : null;
+
+  const last = bars.length ? bars[bars.length - 1].c : px;
+  const rec = s.mag > 0
+    ? clamp(s.dir === 'up' ? (s.hi - last) / s.mag : (last - s.lo) / s.mag, 0, 1)
+    : 0;
+
+  /* 打分：量能、支撑、趋势、回吐各占一票 */
+  let score = 0;
+  if (volX != null) {
+    if (volX >= 2.5) score += 2;
+    else if (volX >= 1.5) score += 1;
+    else if (volX < 1.0) score -= 2;
+  }
+  if (supDist != null) {
+    if (supDist >= 0 && supDist <= 0.15) score += 2;
+    else if (supDist < 0) score -= 2;
+  }
+  if (ctx.trend === 'up') score += 1;
+  else if (ctx.trend === 'down') score -= 1;
+  if (rec >= 0.5) score += 1;
+  else if (rec < 0.2) score -= 1;
+
+  const verdict = score >= 3 ? 'buy' : score >= 1 ? 'wait' : 'avoid';
+
+  /* 振幅还不到插针线的七成，说明根本没有针可接，别硬给方向 */
+  const raw = !SPIKE.hit && s.mag < SPIKE.strike * 0.7;
+
+  return {
+    dir: s.dir, mag: s.mag, magPct: s.mag / px * 100, at: s.at,
+    hi: s.hi, lo: s.lo, tip: tip, volX: volX, rec: rec, secs: secs,
+    sup: ctx.sup, res: ctx.res, supDist: supDist,
+    trend: ctx.trend, trendPct: ctx.trendPct, prev: ctx.prev || [],
+    hit: !!SPIKE.hit, score: score,
+    verdict: raw ? 'none' : verdict
+  };
+}
+
+/* 生成可以直接粘给 AI 的提示词：把真实数据填进模板 */
+function spikePrompt() {
+  const d = spikeDiag();
+  if (!d) return '';
+  const st = simSettle();
+  const leftSec = st ? Math.max(0, Math.round((st.t - Date.now()) / 1000)) : 0;
+  const closed = leftSec <= 0;
+  const cs = S.candles;
+  const cur = cs.length ? cs[cs.length - 1] : null;
+  const dirTxt = d.dir === 'up' ? '向上插针' : '向下插针';
+  const trendTxt = d.trend === 'up' ? '上行' : d.trend === 'down' ? '下行' : '不明';
+  const prevTxt = d.prev.map(function (v) { return v > 0 ? '阳' : '阴'; }).join(' → ');
+  const f = function (v) { return fmtPrice(v); };
+
+  const L = [];
+  L.push('你是一名精通高频交易、加密货币衍生品（BTC）和 K 线价格行为（Price Action）的专业量化交易员。');
+  L.push('当前正在做 ' + S.base + ' 的 5 分钟周期实时插针判断。我的目标是判断：在这根插针里，应该「顺势接针做反弹」，还是「观望 / 开空避险（防止继续破位）」。');
+  L.push('');
+  L.push('【当前 5m K 线】');
+  L.push('- 区间：' + (st ? hhmm(st.t - 300000) + '–' + hhmm(st.t) : '--')
+    + (closed ? '（已收盘）' : '（还剩 ' + Math.floor(leftSec / 60) + ' 分 ' + (leftSec % 60) + ' 秒收盘）'));
+  L.push('- 开盘 ' + f(SPIKE.p0) + ' / 最高 ' + f(d.hi) + ' / 最低 ' + f(d.lo) + ' / 现价 ' + f(S.price));
+  L.push('- ' + (d.hit ? '插针：' : '本区间最大急冲（尚未达到插针线）：')
+    + dirTxt + '，' + d.secs + ' 秒内走了 ' + d.magPct.toFixed(3) + '%（' + f(d.mag) + '），针尖 '
+    + f(d.tip) + '，出现于 ' + hhmm(d.at));
+  L.push('- 针后回吐：' + (d.rec * 100).toFixed(0) + '%（100% = 完全回到起点）');
+  L.push('- 本区间插针线：' + (SPIKE.pct * 100).toFixed(3) + '%（' + f(SPIKE.strike) + '）'
+    + (d.hit ? '，已触发' : '，尚未触发'));
+  L.push('');
+  L.push('【成交量】');
+  L.push('- 插针那 ' + d.secs + ' 秒成交量 ' + (d.volX != null ? d.volX.toFixed(1) + ' 倍于' : '约等于')
+    + '近 20 分钟均量' + (d.volX != null ? '（' + d.volX.toFixed(1) + '×）' : ''));
+  L.push('- 当前 1 分钟成交量 ' + (cur ? cur.v.toFixed(2) + ' ' + S.base : '--'));
+  L.push('');
+  L.push('【上下文与关键位】');
+  L.push('- 前 3 根 5m：' + (prevTxt || '--'));
+  L.push('- 15m 支撑 ' + (d.sup ? f(d.sup) : '--') + ' / 阻力 ' + (d.res ? f(d.res) : '--'));
+  L.push('- 针尖距 15m 支撑：' + (d.supDist != null
+    ? (d.supDist >= 0 ? '上方 ' : '已跌破 ') + Math.abs(d.supDist).toFixed(3) + '%'
+    : '--'));
+  L.push('- 1h 趋势：' + trendTxt
+    + (d.trendPct != null ? '（EMA20 相对 EMA50 ' + (d.trendPct >= 0 ? '+' : '') + d.trendPct.toFixed(2) + '%）' : ''));
+  L.push('');
+  L.push('【分析与决策要求】');
+  L.push('1. 量能与流动性诊断：这次插针是「清算爆杠杆 + 巨量承接」（真洗盘），还是「无量流动性真空」（假止跌）？');
+  L.push('2. 二次测试概率：接下来 1–2 根 5m 是否大概率回测针尖？若回测，是缩量止跌还是直接跌破？');
+  L.push('3. 明确指令，三选一：【激进接针】给入场、止损（针尖下方 0.3%~0.5%）、第一止盈；【等待二次确认】说明等什么形态；【严禁接针 / 顺势开空】给出理由。');
+  L.push('4. 风险提示：一句话指出当前最大的隐患。');
+  return L.join('\n');
+}
+
+function spikeCopy() {
+  const txt = spikePrompt();
+  if (!txt) return;
+  const ok = function () { simHint(t('spk.copied')); };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(txt).then(ok).catch(function () { spikeCopyFallback(txt, ok); });
+  } else {
+    spikeCopyFallback(txt, ok);
+  }
+}
+
+function spikeCopyFallback(txt, ok) {
+  const ta = document.createElement('textarea');
+  ta.value = txt;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); ok(); } catch (e) {}
+  document.body.removeChild(ta);
+}
+
+/* ---------- 渲染插针条 ---------- */
+function spikeRender() {
+  const box = $('#spk');
+  if (!box) return;
+
+  /* 只在 5 分钟区间模式下提供 */
+  const on = bucketMode && bucketMin === 5;
+  box.hidden = !on;
+  if (!on) return;
+
+  const d = spikeDiag();
+  const fill = $('#spkFill'), tag = $('#spkTag'), rg = $('#spkRange');
+  const body = $('#spkBody');
+  if (!d) {
+    rg.textContent = '--';
+    tag.className = 'spk-tag';
+    tag.textContent = t('spk.waiting');
+    body.hidden = true;
+    return;
+  }
+
+  const ratio = clamp(d.mag / SPIKE.strike, 0, 1);
+  fill.style.width = (ratio * 100).toFixed(1) + '%';
+  fill.className = d.hit ? 'hit' : '';
+  box.classList.toggle('hit', d.hit);
+
+  rg.innerHTML = t('spk.range') + ' <b>' + d.magPct.toFixed(3) + '%</b>'
+    + ' <span class="k">/</span> ' + (SPIKE.pct * 100).toFixed(3) + '%';
+
+  tag.className = 'spk-tag' + (d.hit ? ' hit' : '');
+  tag.textContent = d.hit
+    ? t('spk.hit') + ' ' + (d.dir === 'up' ? '↑' : '↓') + ' ' + d.magPct.toFixed(3) + '%'
+    : t('spk.none');
+
+  const jb = $('#spkJudge');
+  if (jb) jb.textContent = t(SPIKE.open ? 'spk.hide' : 'spk.judge');
+
+  if (!SPIKE.open) { body.hidden = true; return; }
+  body.hidden = false;
+
+  const volCls = d.volX == null ? '' : d.volX >= 2 ? 'g' : d.volX < 1 ? 'r' : '';
+  const supCls = d.supDist == null ? '' : d.supDist < 0 ? 'r' : d.supDist <= 0.15 ? 'g' : '';
+  const vKey = d.verdict === 'buy' ? 'spk.vBuy'
+    : d.verdict === 'wait' ? 'spk.vWait'
+      : d.verdict === 'none' ? 'spk.vNone' : 'spk.vAvoid';
+  const vCls = d.verdict === 'buy' ? 'buy' : d.verdict === 'avoid' ? 'avoid' : 'wait';
+
+  body.innerHTML =
+    '<div class="spk-grid">'
+    + '<div><span>' + t('spk.vol') + '</span><b class="' + volCls + '">'
+      + (d.volX == null ? '--' : d.volX.toFixed(1) + '×') + '</b></div>'
+    + '<div><span>' + t('spk.rec') + '</span><b>'
+      + (d.rec * 100).toFixed(0) + '%</b></div>'
+    + '<div><span>' + t('spk.sup') + '</span><b class="' + supCls + '">'
+      + (d.supDist == null ? '--' : (d.supDist >= 0 ? '+' : '') + d.supDist.toFixed(3) + '%') + '</b></div>'
+    + '<div><span>' + t('spk.trend') + '</span><b>'
+      + (d.trend === 'up' ? '↑ ' : d.trend === 'down' ? '↓ ' : '')
+      + (d.trend ? t('spk.trend' + (d.trend === 'up' ? 'Up' : 'Down')) : '--') + '</b></div>'
+    + '</div>'
+    + '<div class="spk-verdict">'
+    + '<em class="' + vCls + '">' + t(vKey) + '</em>'
+    + '<span>' + t(vKey + 'Why') + '</span>'
+    + '<button class="spk-copy" id="spkCopy">' + t('spk.copy') + '</button>'
+    + '</div>';
 }
 
 function simLoad() {
@@ -1853,7 +2368,12 @@ function simBet(dir) {
   const q = simQuote();
   const st = simSettle();
   if (!q || !st) return;
-  const price = dir === 'up' ? q.up : q.down;
+  if (dir === 'spike' && !(bucketMode && bucketMin === 5)) {
+    simHint(t('spk.unavailable'));
+    return;
+  }
+  const price = dir === 'up' ? q.up : dir === 'down' ? q.down : q.spike;
+  if (price == null) { simHint(t('spk.unavailable')); return; }
   const amt = Math.min(SIM.amt === 'max' ? SIM.balance : SIM.amt, SIM.balance);
   if (!(amt >= 1)) { simHint(t('sim.insufficient')); return; }
 
@@ -1868,7 +2388,8 @@ function simBet(dir) {
     cost: amt,
     p0: st.p0,
     settleTime: st.t,
-    fair: q.fair,
+    bucketStart: bucketMode && bk ? bk.start : null,
+    fair: dir === 'spike' ? q.pSpike : q.fair,
     settled: false,
     win: null,
     pnl: null
@@ -1885,8 +2406,17 @@ function simSettleAll(closeTime, closePrice) {
   for (const b of SIM.bets) {
     if (b.settled) continue;
     if (b.settleTime === closeTime) {
-      const actualUp = closePrice > b.p0;
-      const win = (b.dir === 'up') === actualUp;
+      let win;
+      if (b.dir === 'spike') {
+        /* 插针：区间内 30 秒振幅是否越过插针线。
+           按区间起点查命中记录，不用当前 SPIKE.hit —— 新区间可能已经重置 */
+        const h = SPIKE.hits[b.bucketStart] || null;
+        win = !!h;
+        b.spike = h ? { dir: h.dir, mag: h.mag, at: h.at } : null;
+      } else {
+        const actualUp = closePrice > b.p0;
+        win = (b.dir === 'up') === actualUp;
+      }
       const payout = win ? b.shares : 0;
       b.settled = true;
       b.win = win;
@@ -2071,20 +2601,22 @@ function drawSimChart() {
   }
 
   function paint(col, fillCol) {
-    const xEnd = X(pts[pts.length - 1].t);
-    ctx.beginPath();
-    ctx.moveTo(X(pts[0].t), y0);
-    ctx.lineTo(X(pts[0].t), Y(pts[0].p));
-    for (let i = 1; i < pts.length - 1; i++) {
-      const xc = (X(pts[i].t) + X(pts[i + 1].t)) / 2;
-      const yc = (Y(pts[i].p) + Y(pts[i + 1].p)) / 2;
-      ctx.quadraticCurveTo(X(pts[i].t), Y(pts[i].p), xc, yc);
+    if (fillCol) {
+      const xEnd = X(pts[pts.length - 1].t);
+      ctx.beginPath();
+      ctx.moveTo(X(pts[0].t), y0);
+      ctx.lineTo(X(pts[0].t), Y(pts[0].p));
+      for (let i = 1; i < pts.length - 1; i++) {
+        const xc = (X(pts[i].t) + X(pts[i + 1].t)) / 2;
+        const yc = (Y(pts[i].p) + Y(pts[i + 1].p)) / 2;
+        ctx.quadraticCurveTo(X(pts[i].t), Y(pts[i].p), xc, yc);
+      }
+      ctx.lineTo(xEnd, Y(pts[pts.length - 1].p));
+      ctx.lineTo(xEnd, y0);
+      ctx.closePath();
+      ctx.fillStyle = fillCol;
+      ctx.fill();
     }
-    ctx.lineTo(xEnd, Y(pts[pts.length - 1].p));
-    ctx.lineTo(xEnd, y0);
-    ctx.closePath();
-    ctx.fillStyle = fillCol;
-    ctx.fill();
 
     tracePath();
     ctx.strokeStyle = col;
@@ -2097,15 +2629,22 @@ function drawSimChart() {
     ctx.shadowBlur = 0;
   }
 
-  const topH = Math.max(0, y0 - padT);
-  if (topH > 0.5) {
-    ctx.save();
-    ctx.beginPath(); ctx.rect(padL, padT, plotW, topH); ctx.clip();
-    paint('#16c784', 'rgba(22,199,132,.13)');
-    ctx.restore();
+  /* 基准线落在窗口外时不做面积填充：
+     否则整块图会被涂成一色，反而看不出价格走势 */
+  const baseOut = base > hi || base < lo;
+  if (baseOut) {
+    paint(S.price >= base ? '#16c784' : '#ff4d5e', null);
+  } else {
+    const topH = Math.max(0, y0 - padT);
+    if (topH > 0.5) {
+      ctx.save();
+      ctx.beginPath(); ctx.rect(padL, padT, plotW, topH); ctx.clip();
+      paint('#16c784', 'rgba(22,199,132,.13)');
+      ctx.restore();
+    }
   }
   const botH = Math.max(0, padT + plotH - y0);
-  if (botH > 0.5) {
+  if (!baseOut && botH > 0.5) {
     ctx.save();
     ctx.beginPath(); ctx.rect(padL, y0, plotW, botH); ctx.clip();
     paint('#ff4d5e', 'rgba(255,77,94,.13)');
@@ -2152,18 +2691,24 @@ function simRenderQuote() {
     box.textContent = t('sim.noData');
     $('#simUp').disabled = true;
     $('#simDown').disabled = true;
+    $('#simSpike').disabled = true;
     return;
   }
   /* 余额不足：按钮禁用，同时把原因说清楚，并把重置按钮高亮 */
   const broke = SIM.balance < 1;
+  const spikeOn = bucketMode && bucketMin === 5;
   $('#simUp').disabled = broke;
   $('#simDown').disabled = broke;
+  $('#simSpike').disabled = broke || !spikeOn || q.spike == null;
+  const acts = document.querySelector('.sim-actions');
+  if (acts) acts.classList.toggle('two', !spikeOn);
 
   const rst = $('#simReset');
   if (rst) rst.classList.toggle('urgent', broke);
 
   const evUp = q.fair - q.up;
   const evDown = (1 - q.fair) - q.down;
+  const evSpike = q.spike == null ? null : q.pSpike - q.spike;
   const cls = v => v > 0.002 ? 'pos' : v < -0.002 ? 'neg' : '';
   const sgn = v => (v >= 0 ? '+' : '') + v.toFixed(3);
 
@@ -2178,10 +2723,18 @@ function simRenderQuote() {
     + '<div class="r"><span>' + t('sim.buyUp') + ' ' + q.up.toFixed(3) + ' · ' + (1 / q.up).toFixed(2) + 'x</span>'
     + '<b class="' + cls(evUp) + '">' + sgn(evUp) + '</b></div>'
     + '<div class="r"><span>' + t('sim.buyDown') + ' ' + q.down.toFixed(3) + ' · ' + (1 / q.down).toFixed(2) + 'x</span>'
-    + '<b class="' + cls(evDown) + '">' + sgn(evDown) + '</b></div>';
+    + '<b class="' + cls(evDown) + '">' + sgn(evDown) + '</b></div>'
+    + (evSpike != null
+      ? '<div class="r"><span>' + t('sim.buySpike') + ' ' + q.spike.toFixed(3)
+        + ' · ' + (1 / q.spike).toFixed(2) + 'x</span>'
+        + '<b class="' + cls(evSpike) + '">' + sgn(evSpike) + '</b></div>'
+      : '');
 
   $('#simUp').querySelector('i').textContent = q.up.toFixed(3) + ' · ' + (1 / q.up).toFixed(2) + 'x';
   $('#simDown').querySelector('i').textContent = q.down.toFixed(3) + ' · ' + (1 / q.down).toFixed(2) + 'x';
+  $('#simSpike').querySelector('i').textContent = q.spike == null
+    ? (spikeOn && SPIKE.hit ? t('spk.closed') : '--')
+    : q.spike.toFixed(3) + ' · ' + (1 / q.spike).toFixed(2) + 'x';
 }
 
 /* 渲染：庄家账本 */
@@ -2235,8 +2788,8 @@ function simRender() {
 
   let html = '';
   for (const b of SIM.bets) {
-    const dirTxt = b.dir === 'up' ? t('dir.up') : t('dir.down');
-    const dirCls = b.dir === 'up' ? 'up' : 'down';
+    const dirTxt = b.dir === 'up' ? t('dir.up') : b.dir === 'down' ? t('dir.down') : t('dir.spike');
+    const dirCls = b.dir;
     let state, pnlTxt = '--', pnlCls = '';
     if (!b.settled) {
       state = '<span class="tag per">' + t('sim.pending') + '</span>';
@@ -3494,12 +4047,14 @@ function tick() {
   if (now - lastSimTs > 400) {
     lastSimTs = now;
     simStep();
+    spikeTick();
     simRenderQuote();
     if (curPage === 'trade') {
       /* 价格不变时也定时补点，让 60 秒曲线保持连续 */
       if (S.price) pushPriceHist(now, S.price);
       simRenderChartHead();
       drawSimChart();
+      spikeRender();
     }
   }
 
@@ -3801,6 +4356,17 @@ document.querySelectorAll('#seg button').forEach(function (b) {
 /* 模拟盘 */
 $('#simUp').addEventListener('click', function () { simBet('up'); });
 $('#simDown').addEventListener('click', function () { simBet('down'); });
+$('#simSpike').addEventListener('click', function () { simBet('spike'); });
+
+/* 插针：随时点「立即判断」展开诊断，点「复制给 AI」拿填好数据的提示词 */
+$('#spkJudge').addEventListener('click', function () {
+  SPIKE.open = !SPIKE.open;
+  if (SPIKE.open && Date.now() - SPIKE.ctxAt > 120000) spikeCtxLoad();
+  spikeRender();
+});
+$('#spk').addEventListener('click', function (e) {
+  if (e.target && e.target.id === 'spkCopy') spikeCopy();
+});
 document.querySelectorAll('#simSize button').forEach(function (b) {
   b.addEventListener('click', function () {
     SIM.amt = b.dataset.amt === 'max' ? 'max' : +b.dataset.amt;
@@ -3948,6 +4514,7 @@ async function switchCoin(sym) {
   pred = null; pending = null; bk = null;
   SIM.mid = null;
   BOTS.round = null;
+  SPIKE.hits = {}; SPIKE.start = 0; SPIKE.strike = null; SPIKE.cur = null;
   wsIdx = 0; wsRetry = 0;
 
   loadStats();
