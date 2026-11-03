@@ -310,6 +310,103 @@
   .spk-copy{margin-left:auto;flex:none;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
     color:var(--dim);border-radius:7px;padding:3px 9px;font-size:10.5px;cursor:pointer;font-family:inherit}
   .spk-copy:hover{border-color:rgba(240,185,11,.45);color:var(--gold)}
+
+  /* ---------- 永续合约 ---------- */
+  .perp-card{padding-bottom:6px}
+  .pf-head{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:2px 16px 10px}
+  .pf-sym{display:flex;align-items:baseline;gap:6px}
+  .pf-sym b{font-size:17px;font-weight:750;letter-spacing:-.3px}
+  .pf-sym span{font-size:10px;color:var(--gold);background:rgba(240,185,11,.14);padding:1px 5px;border-radius:4px}
+  .pf-stat{display:flex;flex-direction:column;gap:1px;min-width:72px}
+  .pf-stat span{font-size:9.5px;color:var(--dim2);letter-spacing:.4px}
+  .pf-stat b{font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--dim);font-weight:600}
+  .pf-stat i{font-style:normal;font-size:9.5px;color:var(--dim2);font-variant-numeric:tabular-nums}
+  .pf-stat.pf-wide{margin-left:auto}
+
+  .pf-body{display:grid;grid-template-columns:minmax(0,1fr) 302px;gap:14px;padding:0 16px 10px}
+  @media(max-width:1080px){.pf-body{grid-template-columns:1fr}}
+  .pf-chartwrap{border-radius:10px;overflow:hidden;background:rgba(255,255,255,.018);
+    border:1px solid rgba(255,255,255,.05)}
+  #pfChart{display:block;width:100%;height:342px}
+
+  .pf-panel{display:flex;flex-direction:column;gap:7px;font-size:11px}
+  .pf-seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;
+    background:rgba(255,255,255,.05);border-radius:8px;padding:3px}
+  .pf-seg button{border:0;background:transparent;color:var(--dim2);font-family:inherit;
+    font-size:11px;padding:5px 0;border-radius:6px;cursor:pointer;transition:.15s}
+  .pf-seg button.on{background:rgba(255,255,255,.11);color:var(--txt);font-weight:600}
+  .pf-levrow{display:flex;align-items:center;gap:9px}
+  .pf-levrow span{color:var(--dim2);white-space:nowrap}
+  .pf-levrow input{flex:1;accent-color:#f0b90b;height:3px;min-width:0}
+  .pf-levrow b{color:var(--gold);font-variant-numeric:tabular-nums;min-width:40px;text-align:right}
+  .pf-field{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.045);
+    border:1px solid rgba(255,255,255,.07);border-radius:7px;padding:5px 9px}
+  .pf-field label{color:var(--dim2);white-space:nowrap;font-size:10.5px}
+  .pf-field input{flex:1;min-width:0;background:transparent;border:0;color:var(--txt);
+    font-family:inherit;font-size:12px;font-variant-numeric:tabular-nums;outline:none}
+  .pf-field .u{color:var(--dim2);font-size:10px}
+  .pf-pct{width:100%;accent-color:#f0b90b;height:3px}
+  .pf-info{display:grid;grid-template-columns:1fr 1fr;gap:5px 10px;padding:7px 9px;
+    border-radius:8px;background:rgba(255,255,255,.03)}
+  .pf-info div{display:flex;justify-content:space-between;gap:6px;min-width:0}
+  .pf-info span{color:var(--dim2);font-size:10px;white-space:nowrap}
+  .pf-info b{color:var(--dim);font-variant-numeric:tabular-nums;font-size:10.5px;overflow:hidden;text-overflow:ellipsis}
+  .pf-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .pf-btns button{border:0;border-radius:8px;padding:8px 0;font-family:inherit;font-size:12.5px;
+    font-weight:700;cursor:pointer;color:#07100c;transition:.15s}
+  .pf-btns button i{display:block;font-style:normal;font-size:9.5px;font-weight:500;opacity:.75;margin-top:1px}
+  .pf-long{background:linear-gradient(180deg,#22d894,#16c784)}
+  .pf-short{background:linear-gradient(180deg,#ff6b7a,#ff4d5e);color:#150a0c}
+  .pf-btns button:hover{filter:brightness(1.08)}
+  .pf-btns button:disabled{opacity:.35;cursor:not-allowed;filter:none}
+  .pf-hint{min-height:15px;color:var(--dim2);font-size:10px;line-height:1.5}
+  .pf-hint.bad{color:var(--down)}
+
+  .pf-acct{display:flex;align-items:center;gap:22px;flex-wrap:wrap;margin:0 16px 8px;
+    padding:8px 11px;border-radius:9px;background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.05)}
+  .pf-acct div{display:flex;flex-direction:column;gap:1px}
+  .pf-acct span{font-size:9.5px;color:var(--dim2);letter-spacing:.3px}
+  .pf-acct b{font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--dim);font-weight:600}
+  .pf-acct b.pos{color:var(--good)}.pf-acct b.neg{color:var(--bad)}
+  .pf-reset{margin-left:auto;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+    color:var(--dim);border-radius:7px;padding:4px 9px;cursor:pointer;font-size:12px;font-family:inherit}
+  .pf-reset:hover{color:var(--gold);border-color:rgba(240,185,11,.4)}
+
+  .pf-pos{padding:0 16px}
+  .pf-sub{display:flex;align-items:baseline;gap:9px;margin-bottom:5px}
+  .pf-sub h3{font-size:11px;font-weight:600;color:var(--dim);margin:0;letter-spacing:.3px}
+  .pf-sub span{font-size:10px;color:var(--dim2)}
+  .pf-pos .sim-tbl td{font-size:11px}
+
+  .pf-tabs{display:flex;gap:4px;padding:10px 16px 0;flex-wrap:wrap}
+  .pf-tabs button{background:transparent;border:0;border-bottom:2px solid transparent;color:var(--dim2);
+    font-family:inherit;font-size:11px;padding:5px 9px;cursor:pointer}
+  .pf-tabs button.on{color:var(--txt);border-bottom-color:var(--gold)}
+  .pf-panes{padding:6px 16px 12px;min-height:150px}
+  .pf-pane .sim-tbl th{padding-top:6px}
+
+  .pf-form{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:9px}
+  .pf-form .pf-field{flex:0 0 152px}
+  .pf-form .pf-seg{flex:0 0 140px}
+  .pf-go{background:rgba(240,185,11,.16);border:1px solid rgba(240,185,11,.4);color:var(--gold);
+    border-radius:7px;padding:5px 12px;font-family:inherit;font-size:11px;cursor:pointer}
+  .pf-go:hover{background:rgba(240,185,11,.26)}
+  .pf-stop{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--dim);
+    border-radius:7px;padding:5px 12px;font-family:inherit;font-size:11px;cursor:pointer}
+  .pf-stop:hover{color:var(--down);border-color:rgba(255,77,94,.4)}
+  .pf-gstate{font-size:10.5px;color:var(--dim2);line-height:1.7}
+  .pf-gstate b{color:var(--dim);font-variant-numeric:tabular-nums}
+  .pf-gstate .g{color:var(--good)}
+  .pf-lsbar{height:6px;border-radius:3px;overflow:hidden;display:flex;margin-bottom:8px;background:rgba(255,255,255,.06)}
+  .pf-lsbar i{display:block;height:100%}
+  .pf-liqrow{display:flex;justify-content:space-between;font-size:10px;color:var(--dim2);margin-bottom:4px}
+  .pf-mini{display:flex;gap:8px;align-items:center;font-size:10.5px;color:var(--dim2)}
+  .perp-card b.pos,.perp-card td.pos{color:var(--good)}
+  .perp-card b.neg,.perp-card td.neg{color:var(--bad)}
+  .pf-mini-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--dim);
+    border-radius:5px;padding:2px 7px;font-size:10px;font-family:inherit;cursor:pointer}
+  .pf-mini-btn:hover{color:var(--gold);border-color:rgba(240,185,11,.4)}
+  .pf-field input:disabled{opacity:.45}
   .sim-hint{font-size:10px;color:var(--dim2);margin-top:7px;line-height:1.6;min-height:16px}
   .sim-tbl{width:100%;border-collapse:collapse;font-size:11.5px;table-layout:fixed}
   .sim-tbl th{text-align:left;font-weight:500;color:var(--dim2);font-size:10px;padding:0 10px 7px;white-space:nowrap}
@@ -478,6 +575,7 @@
     <button data-tab="market" class="on" data-i18n="tab.market">行情</button>
     <button data-tab="trade" data-i18n="tab.trade">买涨跌</button>
     <button data-tab="house" data-i18n="tab.house">庄家</button>
+    <button data-tab="perp" data-i18n="tab.perp">合约</button>
   </nav>
 
   <!-- 主区 -->
@@ -752,6 +850,166 @@
     </div>
   </section>
 
+  <!-- ===================== 永续合约 ===================== -->
+  <section class="card perp-card" data-page="perp">
+    <div class="pf-head">
+      <div class="pf-sym"><b id="pfSym">BTCUSDT</b><span data-i18n="perp.perp">永续</span></div>
+      <div class="pf-stat"><span data-i18n="perp.mark">标记</span><b id="pfMark">--</b></div>
+      <div class="pf-stat"><span data-i18n="perp.index">指数</span><b id="pfIndex">--</b></div>
+      <div class="pf-stat"><span data-i18n="perp.basis">基差</span><b id="pfBasis">--</b></div>
+      <div class="pf-stat"><span data-i18n="perp.fund">资金费</span><b id="pfFund">--</b><i id="pfFundT">--</i></div>
+      <div class="pf-stat"><span data-i18n="perp.oi">持仓量</span><b id="pfOi">--</b></div>
+      <div class="pf-stat"><span>24h</span><b id="pf24">--</b></div>
+      <div class="pf-stat pf-wide"><span data-i18n="perp.ls">多空比</span><b id="pfLs">--</b></div>
+    </div>
+
+    <div class="pf-body">
+      <div class="pf-chartwrap"><canvas id="pfChart"></canvas></div>
+
+      <div class="pf-panel">
+        <div class="pf-seg" id="pfMode">
+          <button data-m="cross" class="on" data-i18n="perp.cross">全仓</button>
+          <button data-m="iso" data-i18n="perp.iso">逐仓</button>
+        </div>
+
+        <div class="pf-levrow">
+          <span data-i18n="perp.lev">杠杆</span>
+          <input type="range" id="pfLev" min="1" max="125" step="1" value="20">
+          <b id="pfLevV">20x</b>
+        </div>
+
+        <div class="pf-seg" id="pfType">
+          <button data-t="market" class="on" data-i18n="perp.market">市价</button>
+          <button data-t="limit" data-i18n="perp.limit">限价</button>
+          <button data-t="stop" data-i18n="perp.stop">止损</button>
+        </div>
+
+        <div class="pf-field"><label data-i18n="perp.price">价格</label>
+          <input id="pfPrice" type="number" step="0.1" placeholder="--"><span class="u">USDT</span></div>
+        <div class="pf-field"><label data-i18n="perp.qty">数量</label>
+          <input id="pfQty" type="number" step="0.001" placeholder="0"><span class="u" id="pfUnit">BTC</span></div>
+
+        <input type="range" id="pfPct" min="0" max="100" step="1" value="0" class="pf-pct">
+
+        <div class="pf-info">
+          <div><span data-i18n="perp.avail">可用</span><b id="pfAvail">--</b></div>
+          <div><span data-i18n="perp.notional">名义价值</span><b id="pfNotional">--</b></div>
+          <div><span data-i18n="perp.marginNeed">所需保证金</span><b id="pfMargin">--</b></div>
+          <div><span data-i18n="perp.liqEst">预估强平价</span><b id="pfLiq">--</b></div>
+          <div><span data-i18n="perp.feeEst">手续费</span><b id="pfFee">--</b></div>
+          <div><span data-i18n="perp.risk">风险度</span><b id="pfRisk">--</b></div>
+        </div>
+
+        <div class="pf-btns">
+          <button class="pf-long" id="pfLong"><span data-i18n="perp.long">开多</span><i>--</i></button>
+          <button class="pf-short" id="pfShort"><span data-i18n="perp.short">开空</span><i>--</i></button>
+        </div>
+        <div class="pf-hint" id="pfHint"></div>
+      </div>
+    </div>
+
+    <div class="pf-acct">
+      <div><span data-i18n="perp.wallet">钱包余额</span><b id="pfWallet">--</b></div>
+      <div><span data-i18n="perp.upl">未实现盈亏</span><b id="pfUpl">--</b></div>
+      <div><span data-i18n="perp.equity">账户权益</span><b id="pfEquity">--</b></div>
+      <div><span data-i18n="perp.realized">已实现盈亏</span><b id="pfReal">--</b></div>
+      <div><span data-i18n="perp.fundSum">累计资金费</span><b id="pfFundSum">--</b></div>
+      <div><span data-i18n="perp.feeSum">累计手续费</span><b id="pfFeeSum">--</b></div>
+      <button class="pf-reset" id="pfReset" data-i18n-title="perp.reset" title="重置合约账户">↺</button>
+    </div>
+
+    <div class="pf-pos">
+      <div class="pf-sub"><h3 data-i18n="perp.positions">持仓</h3><span id="pfPosNote"></span></div>
+      <table class="sim-tbl">
+        <thead><tr>
+          <th data-i18n="perp.thSym">合约</th><th data-i18n="perp.thSide">方向</th>
+          <th data-i18n="perp.thQty">数量</th><th data-i18n="perp.thEntry">开仓价</th>
+          <th data-i18n="perp.thMark">标记价</th><th data-i18n="perp.thLiq">强平价</th>
+          <th data-i18n="perp.thMargin">保证金</th><th data-i18n="perp.thRatio">保证金率</th>
+          <th data-i18n="perp.thPnl">未实现盈亏</th><th data-i18n="perp.thAct">操作</th>
+        </tr></thead>
+        <tbody id="pfPosBody"></tbody>
+      </table>
+      <div class="empty" id="pfPosEmpty" data-i18n="perp.noPos">暂无持仓</div>
+    </div>
+
+    <div class="pf-tabs" id="pfTabs">
+      <button data-p="orders" class="on" data-i18n="perp.orders">当前委托</button>
+      <button data-p="fills" data-i18n="perp.fills">成交记录</button>
+      <button data-p="liq" data-i18n="perp.liqFlow">爆仓流</button>
+      <button data-p="grid" data-i18n="perp.grid">网格</button>
+      <button data-p="twap" data-i18n="perp.twap">TWAP</button>
+    </div>
+
+    <div class="pf-panes">
+      <div class="pf-pane" data-p="orders">
+        <table class="sim-tbl">
+          <thead><tr>
+            <th data-i18n="perp.thTime">时间</th><th data-i18n="perp.thSym">合约</th>
+            <th data-i18n="perp.thType">类型</th><th data-i18n="perp.thSide">方向</th>
+            <th data-i18n="perp.thPrice">价格</th><th data-i18n="perp.thQty">数量</th>
+            <th data-i18n="perp.thAct">操作</th>
+          </tr></thead>
+          <tbody id="pfOrdBody"></tbody>
+        </table>
+        <div class="empty" id="pfOrdEmpty" data-i18n="perp.noOrders">暂无委托</div>
+      </div>
+
+      <div class="pf-pane" data-p="fills" hidden>
+        <table class="sim-tbl">
+          <thead><tr>
+            <th data-i18n="perp.thTime">时间</th><th data-i18n="perp.thSym">合约</th>
+            <th data-i18n="perp.thSide">方向</th><th data-i18n="perp.thPrice">价格</th>
+            <th data-i18n="perp.thQty">数量</th><th data-i18n="perp.feeEst">手续费</th>
+            <th data-i18n="perp.thPnl">已实现盈亏</th>
+          </tr></thead>
+          <tbody id="pfFillBody"></tbody>
+        </table>
+        <div class="empty" id="pfFillEmpty" data-i18n="perp.noFills">暂无成交</div>
+      </div>
+
+      <div class="pf-pane" data-p="liq" hidden>
+        <div class="pf-lsbar" id="pfLiqBar"></div>
+        <table class="sim-tbl">
+          <thead><tr>
+            <th data-i18n="perp.thTime">时间</th><th data-i18n="perp.thSym">合约</th>
+            <th data-i18n="perp.thSide">方向</th><th data-i18n="perp.thPrice">价格</th>
+            <th data-i18n="perp.thQty">数量</th><th data-i18n="perp.thValue">金额</th>
+          </tr></thead>
+          <tbody id="pfLiqBody"></tbody>
+        </table>
+        <div class="empty" id="pfLiqEmpty" data-i18n="perp.noLiq">等待爆仓单…</div>
+      </div>
+
+      <div class="pf-pane" data-p="grid" hidden>
+        <div class="pf-form">
+          <div class="pf-field"><label data-i18n="perp.gLow">下界</label><input id="gdLow" type="number" step="0.1"></div>
+          <div class="pf-field"><label data-i18n="perp.gHigh">上界</label><input id="gdHigh" type="number" step="0.1"></div>
+          <div class="pf-field"><label data-i18n="perp.gN">格数</label><input id="gdN" type="number" value="10" min="2" max="100"></div>
+          <div class="pf-field"><label data-i18n="perp.gQty">每格数量</label><input id="gdQty" type="number" step="0.001"></div>
+          <button class="pf-go" id="gdStart" data-i18n="perp.gStart">启动网格</button>
+          <button class="pf-stop" id="gdStop" data-i18n="perp.gStop">停止</button>
+        </div>
+        <div class="pf-gstate" id="gdState"></div>
+      </div>
+
+      <div class="pf-pane" data-p="twap" hidden>
+        <div class="pf-form">
+          <div class="pf-field"><label data-i18n="perp.tQty">总量</label><input id="twQty" type="number" step="0.001"></div>
+          <div class="pf-field"><label data-i18n="perp.tMin">时长(分)</label><input id="twMin" type="number" value="10" min="1"></div>
+          <div class="pf-field"><label data-i18n="perp.tSlice">切片数</label><input id="twSlice" type="number" value="10" min="2" max="120"></div>
+          <div class="pf-seg" id="twSide">
+            <button data-s="long" class="on" data-i18n="perp.long">开多</button>
+            <button data-s="short" data-i18n="perp.short">开空</button>
+          </div>
+          <button class="pf-go" id="twStart" data-i18n="perp.tStart">启动 TWAP</button>
+          <button class="pf-stop" id="twStop" data-i18n="perp.tStop">停止</button>
+        </div>
+        <div class="pf-gstate" id="twState"></div>
+      </div>
+    </div>
+  </section>
+
   <!-- 历史 -->
   <section class="card history-card" data-page="market">
     <div class="card-head"><h2 data-i18n="hist.title">结算记录</h2>
@@ -1007,6 +1265,127 @@ const DICT = {
   'tab.market':     ['行情', 'Market', '相場', '시세', 'Рынок'],
   'tab.trade':      ['买涨跌', 'Trade', '売買', '매매', 'Торговля'],
   'tab.house':      ['庄家', 'House', 'ハウス', '하우스', 'Дом'],
+  'tab.perp':       ['合约', 'Futures', '先物', '선물', 'Фьючерсы'],
+
+  'perp.perp':      ['永续', 'PERP', '無期限', '무기한', 'PERP'],
+  'perp.mark':      ['标记', 'Mark', 'マーク', '마크', 'Марк'],
+  'perp.index':     ['指数', 'Index', '指数', '지수', 'Индекс'],
+  'perp.basis':     ['基差', 'Basis', 'ベーシス', '베이시스', 'Базис'],
+  'perp.fund':      ['资金费', 'Funding', '資金調達', '펀딩', 'Фандинг'],
+  'perp.oi':        ['持仓量', 'Open interest', '建玉', '미결제약정', 'Откр. интерес'],
+  'perp.ls':        ['多空比', 'Long/Short', 'ロング/ショート', '롱/숏', 'Лонг/шорт'],
+  'perp.cross':     ['全仓', 'Cross', 'クロス', '교차', 'Кросс'],
+  'perp.iso':       ['逐仓', 'Isolated', 'イソレイテッド', '격리', 'Изолир.'],
+  'perp.lev':       ['杠杆', 'Leverage', 'レバレッジ', '레버리지', 'Плечо'],
+  'perp.market':    ['市价', 'Market', '成行', '시장가', 'Рыночная'],
+  'perp.limit':     ['限价', 'Limit', '指値', '지정가', 'Лимит'],
+  'perp.stop':      ['止损', 'Stop', '逆指値', '스탑', 'Стоп'],
+  'perp.price':     ['价格', 'Price', '価格', '가격', 'Цена'],
+  'perp.qty':       ['数量', 'Size', '数量', '수량', 'Объём'],
+  'perp.avail':     ['可用', 'Available', '利用可能', '사용 가능', 'Доступно'],
+  'perp.notional':  ['名义价值', 'Notional', '想定元本', '명목가', 'Номинал'],
+  'perp.marginNeed':['所需保证金', 'Margin', '必要証拠金', '필요 증거금', 'Маржа'],
+  'perp.liqEst':    ['预估强平价', 'Est. liq.', '推定清算価格', '예상 청산가', 'Ликв. цена'],
+  'perp.feeEst':    ['手续费', 'Fee', '手数料', '수수료', 'Комиссия'],
+  'perp.risk':      ['风险度', 'Risk', 'リスク', '위험도', 'Риск'],
+  'perp.long':      ['开多', 'Long', 'ロング', '롱', 'Лонг'],
+  'perp.short':     ['开空', 'Short', 'ショート', '숏', 'Шорт'],
+  'perp.buy':       ['买入', 'Buy', '買い', '매수', 'Покупка'],
+  'perp.sell':      ['卖出', 'Sell', '売り', '매도', 'Продажа'],
+  'perp.close':     ['平仓', 'Close', '決済', '청산', 'Закрыть'],
+  'perp.closed':    ['已平仓', 'Closed', '決済済み', '청산 완료', 'Закрыто'],
+  'perp.cancel':    ['撤单', 'Cancel', '取消', '취소', 'Отмена'],
+  'perp.reduce':    ['只减仓', 'Reduce', '縮小のみ', '축소 전용', 'Только сокращ.'],
+  'perp.mode':      ['模式', 'Mode', 'モード', '모드', 'Режим'],
+  'perp.wallet':    ['钱包余额', 'Wallet', 'ウォレット', '지갑 잔고', 'Кошелёк'],
+  'perp.upl':       ['未实现盈亏', 'Unrealized', '含み損益', '미실현 손익', 'Нереализ. P&L'],
+  'perp.equity':    ['账户权益', 'Equity', '純資産', '계정 자산', 'Капитал'],
+  'perp.realized':  ['已实现盈亏', 'Realized', '実現損益', '실현 손익', 'Реализ. P&L'],
+  'perp.fundSum':   ['累计资金费', 'Funding paid', '累計資金費', '누적 펀딩', 'Фандинг итого'],
+  'perp.feeSum':    ['累计手续费', 'Fees paid', '累計手数料', '누적 수수료', 'Комиссии итого'],
+  'perp.reset':     ['重置合约账户', 'Reset futures account', '先物口座をリセット', '선물 계정 초기화', 'Сбросить счёт'],
+  'perp.resetConfirm':['确定重置合约账户？持仓和委托都会被清空。', 'Reset the futures account? Positions and orders will be cleared.', '先物口座をリセットしますか？', '선물 계정을 초기화할까요?', 'Сбросить счёт?'],
+  'perp.resetDone': ['合约账户已重置', 'Futures account reset', 'リセットしました', '초기화 완료', 'Счёт сброшен'],
+  'perp.positions': ['持仓', 'Positions', '建玉', '포지션', 'Позиции'],
+  'perp.noPos':     ['暂无持仓', 'No positions', '建玉なし', '포지션 없음', 'Нет позиций'],
+  'perp.thSym':     ['合约', 'Symbol', '銘柄', '종목', 'Инстр.'],
+  'perp.thSide':    ['方向', 'Side', '方向', '방향', 'Сторона'],
+  'perp.thQty':     ['数量', 'Size', '数量', '수량', 'Объём'],
+  'perp.thEntry':   ['开仓价', 'Entry', '建値', '진입가', 'Вход'],
+  'perp.thMark':    ['标记价', 'Mark', 'マーク', '마크', 'Марк'],
+  'perp.thLiq':     ['强平价', 'Liq. price', '清算価格', '청산가', 'Ликв.'],
+  'perp.thMargin':  ['保证金', 'Margin', '証拠金', '증거금', 'Маржа'],
+  'perp.thRatio':   ['保证金率', 'Margin ratio', '証拠金率', '증거금률', 'Марж.比率'],
+  'perp.thPnl':     ['未实现盈亏', 'PnL', '損益', '손익', 'P&L'],
+  'perp.thAct':     ['操作', 'Action', '操作', '작업', 'Действие'],
+  'perp.thTime':    ['时间', 'Time', '時刻', '시간', 'Время'],
+  'perp.thType':    ['类型', 'Type', '種別', '유형', 'Тип'],
+  'perp.thPrice':   ['价格', 'Price', '価格', '가격', 'Цена'],
+  'perp.thValue':   ['金额', 'Value', '金額', '금액', 'Сумма'],
+  'perp.orders':    ['当前委托', 'Open orders', '注文中', '미체결', 'Ордера'],
+  'perp.fills':     ['成交记录', 'Trade history', '約定履歴', '체결 내역', 'Сделки'],
+  'perp.liqFlow':   ['爆仓流', 'Liquidations', '清算フィード', '청산 피드', 'Ликвидации'],
+  'perp.grid':      ['网格', 'Grid', 'グリッド', '그리드', 'Сетка'],
+  'perp.twap':      ['TWAP', 'TWAP', 'TWAP', 'TWAP', 'TWAP'],
+  'perp.noOrders':  ['暂无委托', 'No open orders', '注文なし', '주문 없음', 'Нет ордеров'],
+  'perp.noFills':   ['暂无成交', 'No trades yet', '約定なし', '체결 없음', 'Нет сделок'],
+  'perp.noLiq':     ['等待爆仓单…', 'Waiting for liquidations…', '清算待ち…', '청산 대기…', 'Ожидание ликвидаций…'],
+  'perp.noLiqNet':  ['当前网络收不到合约推送（fstream 被屏蔽），爆仓流不可用',
+                     'Futures push is blocked on this network — liquidation feed unavailable',
+                     'この回線では先物プッシュが遮断されています',
+                     '이 네트워크에서는 선물 푸시가 차단됩니다',
+                     'Пуш-канал фьючерсов заблокирован в этой сети'],
+  'perp.liqLong':   ['多单爆仓', 'Long liq.', 'ロング清算', '롱 청산', 'Ликв. лонга'],
+  'perp.liqShort':  ['空单爆仓', 'Short liq.', 'ショート清算', '숏 청산', 'Ликв. шорта'],
+  'perp.liqTag':    ['强平', 'LIQ', '清算', '청산', 'ЛИКВ'],
+  'perp.loading':   ['加载合约行情…', 'Loading futures data…', '先物データ読込中…', '선물 데이터 로딩…', 'Загрузка…'],
+  'perp.eQty':      ['请输入数量', 'Enter a size', '数量を入力', '수량을 입력', 'Введите объём'],
+  'perp.ePrice':    ['请输入价格', 'Enter a price', '価格を入力', '가격을 입력', 'Введите цену'],
+  'perp.eMargin':   ['可用保证金不足', 'Insufficient margin', '証拠金不足', '증거금 부족', 'Недостаточно маржи'],
+  'perp.eNoPrice':  ['行情还没就绪', 'Market data not ready', '相場データ待ち', '시세 준비 중', 'Данные не готовы'],
+  'perp.ePost':     ['只做 maker 的委托会立即成交，已拒绝', 'Post-only order would cross', 'Post-only が即約定します', 'Post-only 즉시 체결', 'Post-only пересёк бы'],
+  'perp.eIoc':      ['未成交，已撤销', 'Not filled, cancelled', '未約定で取消', '미체결 취소', 'Не исполнено'],
+  'perp.okMarket':  ['市价成交 {0}', 'Market filled {0}', '成行約定 {0}', '시장가 체결 {0}', 'Рынок {0}'],
+  'perp.okLimit':   ['已挂单 {0} @ {1}', 'Order placed {0} @ {1}', '注文 {0} @ {1}', '주문 {0} @ {1}', 'Ордер {0} @ {1}'],
+  'perp.liqMsg':    ['{0} 已强平，亏损 {1}', '{0} liquidated, PnL {1}', '{0} 清算、損益 {1}', '{0} 청산, 손익 {1}', '{0} ликвидирован, {1}'],
+  'perp.liquidated':['保证金率触及 100%，账户已被强平', 'Margin ratio hit 100% — liquidated', '証拠金率100%で清算', '증거금률 100% 청산', 'Маржа 100% — ликвидация'],
+  'perp.gLow':      ['下界', 'Lower', '下限', '하한', 'Нижняя'],
+  'perp.gHigh':     ['上界', 'Upper', '上限', '상한', 'Верхняя'],
+  'perp.gN':        ['格数', 'Grids', '分割数', '격자 수', 'Уровней'],
+  'perp.gQty':      ['每格数量', 'Size/grid', '1格数量', '격자당 수량', 'Объём/ур.'],
+  'perp.gStart':    ['启动网格', 'Start grid', 'グリッド開始', '그리드 시작', 'Запустить'],
+  'perp.gStop':     ['停止', 'Stop', '停止', '중지', 'Стоп'],
+  'perp.gIdle':     ['未运行。设定区间后，会在区间内均匀挂单，成交后自动反向补单。',
+                     'Idle. Set a range and it places orders evenly, re-quoting after each fill.',
+                     '停止中。範囲を設定すると均等に注文し、約定後に反対売買を出します。',
+                     '대기 중. 범위를 설정하면 균등 주문 후 체결 시 반대 주문을 냅니다.',
+                     'Не запущена. Задайте диапазон — ордера встанут равномерно.'],
+  'perp.gRun':      ['网格运行中 {0}', 'Grid running {0}', 'グリッド稼働 {0}', '그리드 실행 {0}', 'Сетка {0}'],
+  'perp.gFilled':   ['已成交', 'filled', '約定', '체결', 'исполнено'],
+  'perp.gOpen':     ['挂单中', 'open', '注文中', '미체결', 'открыто'],
+  'perp.gRangeTxt': ['区间', 'range', '範囲', '범위', 'диапазон'],
+  'perp.gErr':      ['参数不合法：需要 下界 < 上界，格数 ≥ 2', 'Invalid: need lower < upper and grids ≥ 2', 'パラメータ不正', '잘못된 값', 'Неверные параметры'],
+  'perp.gRange':    ['当前标记价不在区间内', 'Mark price is outside the range', 'マーク価格が範囲外', '마크가 범위 밖', 'Цена вне диапазона'],
+  'perp.gBusy':     ['已有网格在运行，先停止', 'A grid is already running', '稼働中のグリッドあり', '실행 중인 그리드 있음', 'Сетка уже идёт'],
+  'perp.gOn':       ['已挂出 {0} 格', 'Placed {0} grid orders', '{0} 件発注', '{0}개 주문', 'Выставлено {0}'],
+  'perp.gOff':      ['网格已停止，挂单已撤销', 'Grid stopped, orders cancelled', 'グリッド停止', '그리드 중지', 'Сетка остановлена'],
+  'perp.tQty':      ['总量', 'Total', '合計', '총량', 'Всего'],
+  'perp.tMin':      ['时长(分)', 'Minutes', '時間(分)', '시간(분)', 'Минут'],
+  'perp.tSlice':    ['切片数', 'Slices', '分割数', '분할 수', 'Частей'],
+  'perp.tStart':    ['启动 TWAP', 'Start TWAP', 'TWAP 開始', 'TWAP 시작', 'Запустить'],
+  'perp.tStop':     ['停止', 'Stop', '停止', '중지', 'Стоп'],
+  'perp.tIdle':     ['未运行。把大单拆成小片按时间匀速执行，减少冲击成本。',
+                     'Idle. Splits a large order into slices over time to cut impact.',
+                     '停止中。大きな注文を時間分散して執行します。',
+                     '대기 중. 큰 주문을 시간 분할 실행합니다.',
+                     'Не запущен. Дробит крупный ордер по времени.'],
+  'perp.tProg':     ['进度', 'progress', '進捗', '진행', 'прогресс'],
+  'perp.tNext':     ['下一片', 'next slice', '次の分割', '다음 분할', 'след. часть'],
+  'perp.tErr':      ['参数不合法：总量 > 0，切片 ≥ 2', 'Invalid: total > 0 and slices ≥ 2', 'パラメータ不正', '잘못된 값', 'Неверные параметры'],
+  'perp.tBusy':     ['已有 TWAP 在运行', 'A TWAP is already running', 'TWAP 稼働中', 'TWAP 실행 중', 'TWAP уже идёт'],
+  'perp.tOn':       ['TWAP 已启动', 'TWAP started', 'TWAP 開始', 'TWAP 시작', 'TWAP запущен'],
+  'perp.tOff':      ['TWAP 已停止', 'TWAP stopped', 'TWAP 停止', 'TWAP 중지', 'TWAP остановлен'],
+  'perp.tDone':     ['TWAP 执行完毕', 'TWAP finished', 'TWAP 完了', 'TWAP 완료', 'TWAP завершён'],
   'sim.title':      ['模拟盘', 'Paper trading', 'ペーパー取引', '모의 거래', 'Демо-торговля'],
   'sim.note':       ['虚拟资金 · 按币安预测市场的二元合约规则结算', 'Virtual funds · settles like Binance event contracts', '仮想資金 · バイナンスのイベントコントラクト方式', '가상 자금 · 바이낸스 이벤트 계약 방식', 'Виртуальные средства · по правилам событийных контрактов'],
   'sim.balance':    ['余额', 'Balance', '残高', '잔액', 'Баланс'],
@@ -4060,6 +4439,11 @@ function tick() {
 
   /* 庄家页的 K 线：每帧刷新，让最后一根蜡烛跟着现价走 */
   if (curPage === 'house') drawBotChart();
+  /* 合约账户侧逻辑与页面无关：离开合约页也要继续撮合、结算资金费、检查强平 */
+  if (FUT.init) {
+    if (curPage === 'perp') pfTick();
+    else pfEngine();
+  }
 
   /* 行情页的图表只在可见时重绘，省掉隐藏页面的 canvas 开销 */
   if (curPage === 'market') {
@@ -4428,6 +4812,1223 @@ $('#simReset').addEventListener('click', simReset);
  * ======================================================= */
 let curPage = 'market';
 
+/* =========================================================
+ *  永续合约（USDT-M Perpetual）
+ *
+ *  行情全部走币安合约公开接口（fapi），带 CORS，浏览器可直连：
+ *    标记价 / 指数价 / 资金费率 / 持仓量 / 多空比 / K 线 / 爆仓流
+ *
+ *  账户和撮合只能在本地模拟 —— 这是纯静态页面，没有后端也没有密钥，
+ *  真下单既做不到也不该做。但保证金、强平、资金费、手续费全部按
+ *  币安规则算，不是随便给个数字。
+ *
+ *  保证金率与强平价（单向持仓模式）：
+ *    逐仓  long 强平价 = entry × (1 − 1/lev) / (1 − mmr)
+ *          short 强平价 = entry × (1 + 1/lev) / (1 + mmr)
+ *    全仓  long 强平价 = (entry×qty − 权益) / (qty × (1 − mmr))
+ *          short 强平价 = (entry×qty + 权益) / (qty × (1 + mmr))
+ *  维持保证金率按币种分层：BTC 0.4%、ETH 0.5%、其它 1%。
+ * ======================================================= */
+const FUT_BASE = 'https://fapi.binance.com';
+const FUT_WSS = 'wss://fstream.binance.com/stream?streams=';
+
+const FUT = {
+  sym: 'BTCUSDT', base: 'BTC',
+  mark: 0, index: 0, last: 0,
+  funding: 0, nextFunding: 0,
+  oi: 0, oiPrev: 0,
+  ls: null,                        // 多空账户比
+  day: { o: 0, h: 0, l: 0, q: 0, chg: 0 },
+  klines: [],                      // 1m
+  marks: {},                       // sym -> 最新标记价
+  liq: [],                         // 爆仓流
+  ws: null, retry: 0, alive: false,
+  ready: false, init: false,
+  pollAt: 0, lsAt: 0, klineAt: 0, msgAt: 0
+};
+
+const ACC = {
+  wallet: 10000,
+  cross: true,                     // true 全仓 / false 逐仓
+  lev: 20,
+  pos: [],                         // 持仓
+  ord: [],                         // 委托
+  fill: [],                        // 成交
+  realized: 0, fees: 0, funding: 0,
+  nextId: 1,
+  grid: null, twap: null,
+  lastFund: 0,
+  type: 'market',                  // 下单类型
+  pane: 'orders'
+};
+
+const TAKER = 0.0005, MAKER = 0.0002;
+
+/* 维持保证金率与最大杠杆：按币种分层，和币安的分档大体一致 */
+function mmrOf(base) {
+  if (base === 'BTC') return 0.004;
+  if (base === 'ETH') return 0.005;
+  return 0.01;
+}
+function maxLevOf(base) {
+  if (base === 'BTC') return 125;
+  if (base === 'ETH') return 100;
+  if (base === 'SOL' || base === 'BNB' || base === 'XRP') return 75;
+  return 50;
+}
+
+const qf = function (v) {
+  if (!isFinite(v)) return '--';
+  const a = Math.abs(v);
+  const d = a >= 1000 ? 1 : a >= 1 ? 3 : 4;
+  return v.toFixed(d);
+};
+const usd = function (v) {
+  if (!isFinite(v)) return '--';
+  return (v >= 0 ? '' : '-') + Math.abs(v).toLocaleString('en-US', {
+    minimumFractionDigits: 2, maximumFractionDigits: 2
+  });
+};
+
+/* ---------- 行情：REST ---------- */
+async function futGet(path) {
+  const ctl = new AbortController();
+  const to = setTimeout(function () { ctl.abort(); }, 9000);
+  try {
+    const r = await fetch(FUT_BASE + path, { cache: 'no-store', signal: ctl.signal });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return await r.json();
+  } finally { clearTimeout(to); }
+}
+
+async function futLoad() {
+  const sym = FUT.sym;
+  try {
+    const r = await Promise.all([
+      futGet('/fapi/v1/klines?symbol=' + sym + '&interval=1m&limit=120'),
+      futGet('/fapi/v1/premiumIndex?symbol=' + sym),
+      futGet('/fapi/v1/openInterest?symbol=' + sym),
+      futGet('/fapi/v1/ticker/24hr?symbol=' + sym)
+    ]);
+    if (FUT.sym !== sym) return;
+    FUT.klines = r[0].map(function (k) {
+      return { t: +k[0], o: +k[1], h: +k[2], l: +k[3], c: +k[4], v: +k[5] };
+    });
+    futApplyPremium(r[1]);
+    FUT.oi = +r[2].openInterest;
+    const d = r[3];
+    FUT.day = {
+      o: +d.openPrice, h: +d.highPrice, l: +d.lowPrice,
+      q: +d.quoteVolume, chg: +d.priceChangePercent
+    };
+    if (!FUT.last) FUT.last = +d.lastPrice;
+    FUT.ready = true;
+    pfRender();
+  } catch (e) { /* 静默降级：面板显示 -- */ }
+}
+
+function futApplyPremium(j) {
+  if (!j || j.symbol !== FUT.sym) return;
+  FUT.mark = +j.markPrice;
+  FUT.index = +j.indexPrice;
+  FUT.funding = +j.lastFundingRate;
+  FUT.nextFunding = +j.nextFundingTime;
+  FUT.marks[FUT.sym] = FUT.mark;
+}
+
+/* 定期刷新：持仓量、多空比、以及所有持仓币种的标记价。
+   有些网络能连上 fstream 但收不到推送（握手成功、数据为空），
+   这时自动降级成 3 秒轮询，至少让盘面还在动 */
+function futSilent() {
+  return !FUT.alive || !FUT.msgAt || Date.now() - FUT.msgAt > 8000;
+}
+
+async function futPoll() {
+  const now = Date.now();
+  if (!FUT.ready) return;
+  const silent = futSilent();
+  const gap = silent ? 3000 : 15000;
+  if (now - FUT.pollAt < gap) return;
+  FUT.pollAt = now;
+
+  const syms = {};
+  syms[FUT.sym] = 1;
+  for (const p of ACC.pos) syms[p.sym] = 1;
+  for (const s in syms) {
+    try {
+      const j = await futGet('/fapi/v1/premiumIndex?symbol=' + s);
+      if (j && j.markPrice) FUT.marks[s] = +j.markPrice;
+      if (s === FUT.sym) futApplyPremium(j);
+    } catch (e) {}
+  }
+
+  /* 推送静默时用 REST 补 K 线，否则图上最后一根永远不动 */
+  if (silent && now - FUT.klineAt > 10000) {
+    FUT.klineAt = now;
+    try {
+      const kl = await futGet('/fapi/v1/klines?symbol=' + FUT.sym + '&interval=1m&limit=120');
+      if (FUT.sym === sym) {
+        FUT.klines = kl.map(function (k) {
+          return { t: +k[0], o: +k[1], h: +k[2], l: +k[3], c: +k[4], v: +k[5] };
+        });
+        FUT.last = FUT.klines[FUT.klines.length - 1].c;
+      }
+    } catch (e) {}
+  }
+
+  if (now - FUT.pollAt > 0) {
+    try {
+      const oi = await futGet('/fapi/v1/openInterest?symbol=' + FUT.sym);
+      FUT.oiPrev = FUT.oi;
+      FUT.oi = +oi.openInterest;
+    } catch (e) {}
+  }
+  if (now - FUT.lsAt > 60000) {
+    FUT.lsAt = now;
+    try {
+      const j = await futGet('/futures/data/globalLongShortAccountRatio?symbol=' + FUT.sym + '&period=5m&limit=1');
+      if (j && j.length) {
+        FUT.ls = { long: +j[0].longAccount, short: +j[0].shortAccount, ratio: +j[0].longShortRatio };
+      }
+    } catch (e) {}
+  }
+  if (curPage === 'perp') pfRender();
+}
+
+/* ---------- 行情：WebSocket ---------- */
+function futConnect() {
+  if (FUT.ws) { try { FUT.ws.close(); } catch (e) {} }
+  const s = FUT.sym.toLowerCase();
+  const streams = [s + '@markPrice@1s', s + '@aggTrade', s + '@kline_1m', '!forceOrder@arr'].join('/');
+  let ws;
+  try { ws = new WebSocket(FUT_WSS + streams); } catch (e) { return; }
+  FUT.ws = ws;
+  /* 注意：这里不更新 msgAt。有些网络能握手但收不到数据，
+     如果在 open 时就打点，静默检测会被每轮重连骗过去 */
+  ws.onopen = function () { FUT.alive = true; FUT.retry = 0; };
+  ws.onmessage = function (ev) { futOnMsg(ev.data); };
+  ws.onclose = function () {
+    FUT.alive = false;
+    if (FUT.ws !== ws) return;
+    const d = Math.min(30000, 1500 * Math.pow(1.6, FUT.retry++));
+    setTimeout(futConnect, d);
+  };
+  ws.onerror = function () { try { ws.close(); } catch (e) {} };
+}
+
+function futOnMsg(raw) {
+  let m;
+  try { m = JSON.parse(raw); } catch (e) { return; }
+  const d = m.data || m;
+  if (!d || !d.e) return;
+  FUT.msgAt = Date.now();          // 只要收到任何一条，就说明推送是活的
+
+  if (d.e === 'markPriceUpdate') {
+    if (d.s !== FUT.sym) return;
+    FUT.mark = +d.p;
+    FUT.index = +d.i;
+    FUT.funding = +d.r;
+    FUT.nextFunding = +d.T;
+    FUT.marks[d.s] = FUT.mark;
+    return;
+  }
+  if (d.e === 'aggTrade') {
+    if (d.s !== FUT.sym) return;
+    FUT.last = +d.p;
+    return;
+  }
+  if (d.e === 'kline') {
+    if (d.s !== FUT.sym) return;
+    const k = d.k;
+    const bar = { t: +k.t, o: +k.o, h: +k.h, l: +k.l, c: +k.c, v: +k.v };
+    const arr = FUT.klines;
+    if (arr.length && arr[arr.length - 1].t === bar.t) arr[arr.length - 1] = bar;
+    else {
+      arr.push(bar);
+      if (arr.length > 240) arr.shift();
+    }
+    FUT.last = bar.c;
+    return;
+  }
+  if (d.e === 'forceOrder') {
+    const o = d.o;
+    if (!o) return;
+    FUT.liq.unshift({
+      ts: +o.T, sym: o.s, side: o.S === 'SELL' ? 'long' : 'short',
+      price: +o.ap || +o.p, qty: +o.q, val: (+o.ap || +o.p) * (+o.q)
+    });
+    if (FUT.liq.length > 60) FUT.liq.length = 60;
+  }
+}
+
+function futSwitch(sym) {
+  FUT.sym = sym;
+  FUT.base = (COINS.find(function (c) { return c.sym === sym; }) || COINS[0]).base;
+  FUT.mark = 0; FUT.index = 0; FUT.last = 0;
+  FUT.klines = []; FUT.ls = null; FUT.oi = 0;
+  FUT.ready = false;
+  if (ACC.lev > maxLevOf(FUT.base)) ACC.lev = maxLevOf(FUT.base);
+  const r = $('#pfLev');
+  if (r) { r.max = maxLevOf(FUT.base); r.value = ACC.lev; }
+  if (FUT.init) { futLoad(); futConnect(); }
+  pfRender();
+}
+
+/* ---------- 账户与保证金 ---------- */
+function markOfSym(sym) {
+  return FUT.marks[sym] || 0;
+}
+function markOf(p) {
+  return FUT.marks[p.sym] || p.entry;
+}
+function uplOf(p) {
+  const m = markOf(p);
+  return p.side === 'long' ? (m - p.entry) * p.qty : (p.entry - m) * p.qty;
+}
+function accEquity() {
+  let u = 0;
+  for (const p of ACC.pos) u += uplOf(p);
+  return ACC.wallet + u;
+}
+function maintOf() {
+  let m = 0;
+  for (const p of ACC.pos) m += p.qty * markOf(p) * mmrOf(p.base);
+  return m;
+}
+function marginRatio() {
+  if (!ACC.pos.length) return 0;
+  const eq = accEquity();
+  if (eq <= 0) return 1;
+  return maintOf() / eq;
+}
+function posMarginRatio(p) {
+  const mmr = mmrOf(p.base);
+  const u = uplOf(p);
+  const base = p.cross ? accEquity() : (p.margin + u);
+  if (base <= 0) return 1;
+  return (p.qty * markOf(p) * mmr) / base;
+}
+
+/* 强平价 */
+function liqOf(p) {
+  const mmr = mmrOf(p.base);
+  if (p.cross) {
+    /* 其它仓位假设不变，取剩余权益 */
+    const other = accEquity() - uplOf(p);
+    const n = p.entry * p.qty;
+    if (p.side === 'long') {
+      const v = (n - other) / (p.qty * (1 - mmr));
+      return v > 0 ? v : 0;
+    }
+    return (n + other) / (p.qty * (1 + mmr));
+  }
+  if (p.side === 'long') return p.entry * (1 - 1 / p.lev) / (1 - mmr);
+  return p.entry * (1 + 1 / p.lev) / (1 + mmr);
+}
+
+/* 已占用保证金与可用余额。钱包里始终含保证金，这里只是把它划出来 */
+function usedMargin() {
+  let m = 0;
+  for (const p of ACC.pos) m += p.qty * markOf(p) / p.lev;
+  return m;
+}
+function availBal() {
+  return Math.max(0, ACC.wallet - usedMargin());
+}
+
+/* ---------- 成交与持仓 ---------- */
+function applyFill(sym, base, dir, qty, price, maker, tag) {
+  if (!(qty > 0)) return null;
+  const feeRate = maker ? MAKER : TAKER;
+  const fee = qty * price * feeRate;
+  ACC.wallet -= fee;
+  ACC.fees += fee;
+
+  let p = null;
+  for (const x of ACC.pos) if (x.sym === sym) { p = x; break; }
+
+  let realized = 0;
+  const isBuy = dir === 'buy';
+
+  if (!p) {
+    ACC.pos.push({
+      sym: sym, base: base,
+      side: isBuy ? 'long' : 'short',
+      qty: qty, entry: price,
+      lev: ACC.lev, cross: ACC.cross,
+      margin: qty * price / ACC.lev,
+      ts: Date.now()
+    });
+  } else if ((p.side === 'long') === isBuy) {
+    /* 同向加仓：加权平均开仓价 */
+    p.entry = (p.entry * p.qty + price * qty) / (p.qty + qty);
+    p.qty += qty;
+    p.margin = p.qty * p.entry / p.lev;
+  } else {
+    /* 反向：先平，平完还有剩余就反手 */
+    const closeQty = Math.min(p.qty, qty);
+    realized = (p.side === 'long' ? 1 : -1) * (price - p.entry) * closeQty;
+    ACC.wallet += realized;
+    ACC.realized += realized;
+    p.qty -= closeQty;
+    if (p.qty <= 1e-12) {
+      ACC.pos.splice(ACC.pos.indexOf(p), 1);
+      const rest = qty - closeQty;
+      if (rest > 1e-12) {
+        ACC.pos.push({
+          sym: sym, base: base,
+          side: isBuy ? 'long' : 'short',
+          qty: rest, entry: price,
+          lev: ACC.lev, cross: ACC.cross,
+          margin: rest * price / ACC.lev,
+          ts: Date.now()
+        });
+      }
+    }
+  }
+
+  ACC.fill.unshift({
+    ts: Date.now(), sym: sym, dir: dir, price: price, qty: qty,
+    fee: fee, pnl: realized, tag: tag || ''
+  });
+  if (ACC.fill.length > 60) ACC.fill.length = 60;
+
+  accSave();
+  pfRender();
+  return { fee: fee, pnl: realized };
+}
+
+/* 平掉整个仓位 */
+function closePos(sym, frac, tag) {
+  const p = ACC.pos.find(function (x) { return x.sym === sym; });
+  if (!p) return;
+  const qty = p.qty * clamp(frac == null ? 1 : frac, 0, 1);
+  if (!(qty > 0)) return;
+  const px = markOf(p) || p.entry;
+  applyFill(sym, p.base, p.side === 'long' ? 'sell' : 'buy', qty, px, false, tag || 'close');
+}
+
+/* ---------- 下单 ---------- */
+function pfPrice() {
+  const el = $('#pfPrice');
+  const v = el ? parseFloat(el.value) : NaN;
+  return isFinite(v) && v > 0 ? v : 0;
+}
+function pfQty() {
+  const el = $('#pfQty');
+  const v = el ? parseFloat(el.value) : NaN;
+  return isFinite(v) && v > 0 ? v : 0;
+}
+
+function placeOrder(side, type, price, qty, opts) {
+  opts = opts || {};
+  const sym = opts.sym || FUT.sym;
+  const base = (COINS.find(function (c) { return c.sym === sym; }) || COINS[0]).base;
+  const m = markOfSym(sym) || FUT.last || 0;
+  if (!(qty > 0)) return { err: t('perp.eQty') };
+  if (!m) return { err: t('perp.eNoPrice') };
+
+  const notional = qty * m;
+  const need = notional / ACC.lev;
+  if (!opts.reduceOnly && need > availBal() - 0.01) return { err: t('perp.eMargin') };
+
+  if (type === 'market') {
+    /* 市价单按标记价成交，加 1bp 滑点模拟吃单 */
+    const px = m * (side === 'buy' ? 1.0001 : 0.9999);
+    applyFill(sym, base, side, qty, px, false, 'market');
+    return { ok: true };
+  }
+
+  const tif = opts.tif || 'GTC';
+  if (type === 'limit' && tif === 'POST_ONLY') {
+    if ((side === 'buy' && price >= m) || (side === 'sell' && price <= m)) {
+      return { err: t('perp.ePost') };
+    }
+  }
+  if (type === 'limit' && (tif === 'IOC' || tif === 'FOK')) {
+    const cross = side === 'buy' ? price >= m : price <= m;
+    if (cross) {
+      applyFill(sym, base, side, qty, price, false, 'ioc');
+      return { ok: true };
+    }
+    return { err: t('perp.eIoc') };
+  }
+
+  ACC.ord.unshift({
+    id: ACC.nextId++, ts: Date.now(), sym: sym, base: base,
+    side: side, type: type, price: price, qty: qty,
+    reduceOnly: !!opts.reduceOnly, tif: tif,
+    grid: !!opts.grid, level: opts.level,
+    status: 'open'
+  });
+  if (ACC.ord.length > 80) ACC.ord.length = 80;
+  accSave();
+  pfRender();
+  return { ok: true };
+}
+
+/* 每 tick 检查委托是否该成交 */
+function checkOrders() {
+  if (!ACC.ord.length) return;
+  const now = Date.now();
+  for (let i = ACC.ord.length - 1; i >= 0; i--) {
+    const o = ACC.ord[i];
+    if (o.status !== 'open') { ACC.ord.splice(i, 1); continue; }
+    const m = markOfSym(o.sym);
+    if (!m) continue;
+    let hit = false;
+    if (o.type === 'limit') {
+      hit = o.side === 'buy' ? m <= o.price : m >= o.price;
+    } else if (o.type === 'stop') {
+      hit = o.side === 'buy' ? m >= o.price : m <= o.price;
+    }
+    if (!hit) continue;
+
+    /* 只减仓：没有对应持仓或方向不对就不成交 */
+    if (o.reduceOnly) {
+      const p = ACC.pos.find(function (x) { return x.sym === o.sym; });
+      if (!p) { o.status = 'cancel'; continue; }
+      if ((p.side === 'long') === (o.side === 'buy')) { o.status = 'cancel'; continue; }
+    }
+
+    const px = o.type === 'limit' ? o.price : m;
+    const r = applyFill(o.sym, o.base, o.side, o.qty, px, o.type === 'limit',
+      o.grid ? 'grid' : o.type);
+    o.status = 'done';
+    ACC.ord.splice(i, 1);
+
+    if (o.grid && ACC.grid && r) gridAfterFill(o, px);
+  }
+}
+
+/* ---------- 强平 ---------- */
+function checkLiq() {
+  if (!ACC.pos.length) return;
+
+  /* 逐仓：单个仓位独立判断 */
+  for (let i = ACC.pos.length - 1; i >= 0; i--) {
+    const p = ACC.pos[i];
+    if (p.cross) continue;
+    const u = uplOf(p);
+    if (p.margin + u > p.qty * markOf(p) * mmrOf(p.base)) continue;
+    doLiq(p, false);
+  }
+
+  /* 全仓：整户判断，触发就全部平掉 */
+  if (ACC.pos.some(function (p) { return p.cross; })) {
+    if (marginRatio() >= 1) {
+      const all = ACC.pos.slice();
+      for (const p of all) doLiq(p, true);
+      ACC.wallet = Math.max(0, ACC.wallet);
+      pfHint(t('perp.liquidated'), true);
+    }
+  }
+}
+
+function doLiq(p) {
+  const m = markOf(p);
+  const u = uplOf(p);
+  const fee = p.qty * m * TAKER;
+  /* 逐仓最多亏掉这个仓位的保证金，全仓按实际亏损扣 */
+  const pnl = p.cross ? (u - fee) : Math.max(u - fee, -p.margin);
+
+  ACC.wallet += pnl;
+  ACC.realized += pnl;
+  ACC.fees += fee;
+  ACC.fill.unshift({
+    ts: Date.now(), sym: p.sym, dir: p.side === 'long' ? 'sell' : 'buy',
+    price: m, qty: p.qty, fee: fee, pnl: pnl, tag: 'liq'
+  });
+  const idx = ACC.pos.indexOf(p);
+  if (idx >= 0) ACC.pos.splice(idx, 1);
+  pfHint(t('perp.liqMsg', p.sym, usd(pnl)), true);
+  accSave();
+}
+
+/* ---------- 资金费 ---------- */
+function settleFunding() {
+  const now = Date.now();
+  if (now - ACC.lastFund < 60000) return;
+  ACC.lastFund = now;
+  if (!ACC.pos.length) return;
+  /* 真实是每 8 小时结算一次；演示里每分钟按 1/480 折算，几分钟就能看到扣费 */
+  let total = 0;
+  for (const p of ACC.pos) {
+    const notional = p.qty * markOf(p);
+    const pay = notional * FUT.funding / 480 * (p.side === 'long' ? 1 : -1);
+    ACC.wallet -= pay;
+    ACC.funding -= pay;
+    total += pay;
+  }
+  if (Math.abs(total) > 0.005) {
+    accSave();
+  }
+}
+
+/* ---------- 持久化 ---------- */
+function accSave() {
+  try {
+    localStorage.setItem('btc-perp-acc', JSON.stringify({
+      wallet: ACC.wallet, pos: ACC.pos, ord: ACC.ord,
+      realized: ACC.realized, fees: ACC.fees, funding: ACC.funding,
+      cross: ACC.cross, lev: ACC.lev, nextId: ACC.nextId
+    }));
+  } catch (e) {}
+}
+function accLoad() {
+  try {
+    const raw = localStorage.getItem('btc-perp-acc');
+    if (!raw) return;
+    const o = JSON.parse(raw);
+    if (typeof o.wallet === 'number') ACC.wallet = o.wallet;
+    if (Array.isArray(o.pos)) ACC.pos = o.pos;
+    if (Array.isArray(o.ord)) ACC.ord = o.ord;
+    if (typeof o.realized === 'number') ACC.realized = o.realized;
+    if (typeof o.fees === 'number') ACC.fees = o.fees;
+    if (typeof o.funding === 'number') ACC.funding = o.funding;
+    if (typeof o.cross === 'boolean') ACC.cross = o.cross;
+    if (typeof o.lev === 'number') ACC.lev = o.lev;
+    if (typeof o.nextId === 'number') ACC.nextId = o.nextId;
+  } catch (e) {}
+}
+
+/* ---------- 提示 ---------- */
+let pfHintT = null;
+function pfHint(msg, bad) {
+  const el = $('#pfHint');
+  if (!el) return;
+  el.textContent = msg || '';
+  el.className = 'pf-hint' + (bad ? ' bad' : '');
+  clearTimeout(pfHintT);
+  if (msg) pfHintT = setTimeout(function () { el.textContent = ''; }, 3200);
+}
+
+/* ---------- 渲染：顶部行情 ---------- */
+function pfRender() {
+  if (!$('#pfSym')) return;
+
+  $('#pfSym').textContent = FUT.sym;
+  $('#pfMark').textContent = FUT.mark ? fmtPrice(FUT.mark) : '--';
+  $('#pfIndex').textContent = FUT.index ? fmtPrice(FUT.index) : '--';
+
+  const basis = FUT.mark && FUT.index ? (FUT.mark - FUT.index) / FUT.index * 100 : null;
+  const be = $('#pfBasis');
+  be.textContent = basis == null ? '--' : (basis >= 0 ? '+' : '') + basis.toFixed(3) + '%';
+  be.className = basis == null ? '' : basis >= 0 ? 'pos' : 'neg';
+
+  const fe = $('#pfFund');
+  fe.textContent = (FUT.funding * 100).toFixed(4) + '%';
+  fe.className = FUT.funding >= 0 ? 'pos' : 'neg';
+
+  const left = FUT.nextFunding - Date.now();
+  $('#pfFundT').textContent = left > 0
+    ? Math.floor(left / 3600000) + ':' + pad2(Math.floor(left / 60000) % 60) + ':' + pad2(Math.floor(left / 1000) % 60)
+    : '--';
+
+  const oiChg = FUT.oiPrev ? (FUT.oi - FUT.oiPrev) / FUT.oiPrev * 100 : null;
+  $('#pfOi').textContent = FUT.oi
+    ? (FUT.oi >= 1000 ? (FUT.oi / 1000).toFixed(1) + 'k' : FUT.oi.toFixed(0)) + ' ' + FUT.base
+    : '--';
+
+  const d24 = $('#pf24');
+  d24.textContent = (FUT.day.chg >= 0 ? '+' : '') + FUT.day.chg.toFixed(2) + '%';
+  d24.className = FUT.day.chg >= 0 ? 'pos' : 'neg';
+
+  const lse = $('#pfLs');
+  lse.textContent = FUT.ls
+    ? (FUT.ls.long * 100).toFixed(1) + '% / ' + (FUT.ls.short * 100).toFixed(1) + '%'
+    : '--';
+
+  /* 账户 */
+  const upl = ACC.pos.reduce(function (a, p) { return a + uplOf(p); }, 0);
+  $('#pfWallet').textContent = usd(ACC.wallet);
+  const ue = $('#pfUpl');
+  ue.textContent = (upl >= 0 ? '+' : '') + usd(upl);
+  ue.className = upl > 0 ? 'pos' : upl < 0 ? 'neg' : '';
+  $('#pfEquity').textContent = usd(accEquity());
+  const re = $('#pfReal');
+  re.textContent = (ACC.realized >= 0 ? '+' : '') + usd(ACC.realized);
+  re.className = ACC.realized > 0 ? 'pos' : ACC.realized < 0 ? 'neg' : '';
+  const fu = $('#pfFundSum');
+  fu.textContent = (ACC.funding >= 0 ? '+' : '') + usd(ACC.funding);
+  fu.className = ACC.funding > 0 ? 'pos' : ACC.funding < 0 ? 'neg' : '';
+  $('#pfFeeSum').textContent = '-' + usd(ACC.fees);
+
+  /* 风险度 */
+  const mr = marginRatio();
+  const rk = $('#pfRisk');
+  rk.textContent = ACC.pos.length ? (mr * 100).toFixed(1) + '%' : '--';
+  rk.className = mr >= 0.8 ? 'neg' : mr >= 0.5 ? '' : 'pos';
+
+  pfPositions();
+  pfOrders();
+  pfFills();
+  pfLiq();
+  pfInfo();
+  pfGridRender();
+  pfTwapRender();
+}
+
+function pfPositions() {
+  const body = $('#pfPosBody');
+  const empty = $('#pfPosEmpty');
+  if (!body) return;
+  if (!ACC.pos.length) {
+    body.innerHTML = '';
+    empty.style.display = 'block';
+    $('#pfPosNote').textContent = '';
+    return;
+  }
+  empty.style.display = 'none';
+  let html = '';
+  for (const p of ACC.pos) {
+    const m = markOf(p);
+    const u = uplOf(p);
+    const lq = liqOf(p);
+    const ratio = posMarginRatio(p);
+    html += '<tr>'
+      + '<td class="b">' + p.sym + '</td>'
+      + '<td><span class="tag ' + (p.side === 'long' ? 'up' : 'down') + '">'
+        + (p.side === 'long' ? t('perp.long') : t('perp.short')) + ' ' + p.lev + 'x</span></td>'
+      + '<td>' + qf(p.qty) + '</td>'
+      + '<td>' + fmtPrice(p.entry) + '</td>'
+      + '<td>' + fmtPrice(m) + '</td>'
+      + '<td class="' + (m && Math.abs(m - lq) / m < 0.02 ? 'neg' : '') + '">' + fmtPrice(lq) + '</td>'
+      + '<td>' + usd(p.qty * p.entry / p.lev) + '</td>'
+      + '<td class="' + (ratio >= 0.8 ? 'neg' : ratio >= 0.5 ? '' : 'pos') + '">'
+        + (ratio * 100).toFixed(1) + '%</td>'
+      + '<td class="' + (u >= 0 ? 'pos' : 'neg') + '">' + (u >= 0 ? '+' : '') + usd(u) + '</td>'
+      + '<td><button class="pf-mini-btn" data-close="' + p.sym + '">' + t('perp.close') + '</button></td>'
+      + '</tr>';
+  }
+  body.innerHTML = html;
+  $('#pfPosNote').textContent = t('perp.mode') + ' · ' + (ACC.cross ? t('perp.cross') : t('perp.iso'));
+}
+
+function pfOrders() {
+  const body = $('#pfOrdBody');
+  if (!body) return;
+  const empty = $('#pfOrdEmpty');
+  if (!ACC.ord.length) {
+    body.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  let html = '';
+  for (const o of ACC.ord) {
+    html += '<tr>'
+      + '<td>' + hhmm(o.ts) + '</td>'
+      + '<td class="b">' + o.sym + '</td>'
+      + '<td>' + t(o.type === 'limit' ? 'perp.limit' : 'perp.stop')
+        + (o.reduceOnly ? ' · ' + t('perp.reduce') : '') + '</td>'
+      + '<td><span class="tag ' + (o.side === 'buy' ? 'up' : 'down') + '">'
+        + (o.side === 'buy' ? t('perp.buy') : t('perp.sell')) + '</span></td>'
+      + '<td>' + fmtPrice(o.price) + '</td>'
+      + '<td>' + qf(o.qty) + '</td>'
+      + '<td><button class="pf-mini-btn" data-cancel="' + o.id + '">' + t('perp.cancel') + '</button></td>'
+      + '</tr>';
+  }
+  body.innerHTML = html;
+}
+
+function pfFills() {
+  const body = $('#pfFillBody');
+  if (!body) return;
+  const empty = $('#pfFillEmpty');
+  if (!ACC.fill.length) {
+    body.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  let html = '';
+  for (const f of ACC.fill.slice(0, 30)) {
+    const liq = f.tag === 'liq';
+    html += '<tr>'
+      + '<td>' + hhmm(f.ts) + '</td>'
+      + '<td class="b">' + f.sym + '</td>'
+      + '<td><span class="tag ' + (f.dir === 'buy' ? 'up' : 'down') + '">'
+        + (f.dir === 'buy' ? t('perp.buy') : t('perp.sell')) + '</span>'
+        + (liq ? ' <span class="tag miss">' + t('perp.liqTag') + '</span>' : '') + '</td>'
+      + '<td>' + fmtPrice(f.price) + '</td>'
+      + '<td>' + qf(f.qty) + '</td>'
+      + '<td>' + f.fee.toFixed(3) + '</td>'
+      + '<td class="' + (f.pnl > 0 ? 'pos' : f.pnl < 0 ? 'neg' : '') + '">'
+        + (f.pnl ? (f.pnl >= 0 ? '+' : '') + f.pnl.toFixed(2) : '--') + '</td>'
+      + '</tr>';
+  }
+  body.innerHTML = html;
+}
+
+function pfLiq() {
+  const body = $('#pfLiqBody');
+  if (!body) return;
+  const empty = $('#pfLiqEmpty');
+  const bar = $('#pfLiqBar');
+  if (!FUT.liq.length) {
+    body.innerHTML = '';
+    empty.style.display = 'block';
+    empty.textContent = futSilent() ? t('perp.noLiqNet') : t('perp.noLiq');
+    if (bar) bar.innerHTML = '';
+    return;
+  }
+  empty.style.display = 'none';
+  let longs = 0, shorts = 0;
+  for (const q of FUT.liq) { if (q.side === 'long') longs += q.val; else shorts += q.val; }
+  const tot = longs + shorts || 1;
+  if (bar) {
+    bar.innerHTML = '<i style="width:' + (longs / tot * 100).toFixed(1) + '%;background:#ff4d5e"></i>'
+      + '<i style="width:' + (shorts / tot * 100).toFixed(1) + '%;background:#16c784"></i>';
+  }
+  let html = '';
+  for (const q of FUT.liq.slice(0, 20)) {
+    html += '<tr>'
+      + '<td>' + hhmm(q.ts) + '</td>'
+      + '<td class="b">' + q.sym + '</td>'
+      + '<td><span class="tag ' + (q.side === 'long' ? 'down' : 'up') + '">'
+        + (q.side === 'long' ? t('perp.liqLong') : t('perp.liqShort')) + '</span></td>'
+      + '<td>' + fmtPrice(q.price) + '</td>'
+      + '<td>' + qf(q.qty) + '</td>'
+      + '<td>' + usd(q.val) + '</td>'
+      + '</tr>';
+  }
+  body.innerHTML = html;
+}
+
+/* ---------- 下单面板信息 ---------- */
+function pfInfo() {
+  const m = FUT.mark || FUT.last || 0;
+  const qty = pfQty();
+  const lev = ACC.lev;
+  const notional = qty * m;
+  $('#pfAvail').textContent = usd(availBal());
+  $('#pfNotional').textContent = usd(notional);
+  $('#pfMargin').textContent = usd(notional / lev);
+  $('#pfFee').textContent = (notional * TAKER).toFixed(2);
+
+  const pe = $('#pfPrice');
+  if (pe && ACC.type !== 'market' && !pe.value && m) pe.placeholder = fmtPrice(m);
+
+  /* 预估强平价：多空各算一次，价格取整免得撑破格子 */
+  const le = $('#pfLiq');
+  if (qty > 0 && m > 0) {
+    const mk = function (side) {
+      return {
+        sym: FUT.sym, base: FUT.base, side: side, qty: qty, entry: m,
+        lev: lev, cross: ACC.cross, margin: notional / lev
+      };
+    };
+    const round = function (v) {
+      return v > 0 ? Math.round(v).toLocaleString('en-US') : '--';
+    };
+    const lqL = liqOf(mk('long'));
+    const lqS = liqOf(mk('short'));
+    le.textContent = round(lqL) + ' / ' + round(lqS);
+    le.className = (lqL > 0 && Math.abs(m - lqL) / m < 0.05) ? 'neg' : '';
+  } else {
+    le.textContent = '--';
+    le.className = '';
+  }
+
+  const b1 = $('#pfLong'), b2 = $('#pfShort');
+  if (b1) {
+    b1.querySelector('i').textContent = qty > 0 ? qf(qty) + ' · ' + lev + 'x' : '--';
+    b2.querySelector('i').textContent = qty > 0 ? qf(qty) + ' · ' + lev + 'x' : '--';
+  }
+}
+
+/* ---------- 图表 ---------- */
+function pfDrawChart() {
+  const cv = $('#pfChart');
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  const sz = sizeCanvas(cv, ctx);
+  const W = sz.w, H = sz.h;
+  ctx.clearRect(0, 0, W, H);
+
+  const ks = FUT.klines;
+  if (ks.length < 2) {
+    ctx.fillStyle = 'rgba(139,150,168,.45)';
+    ctx.font = '12px system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(t('perp.loading'), W / 2, H / 2);
+    return;
+  }
+
+  const N = Math.min(ks.length, 90);
+  const arr = ks.slice(-N);
+  const padL = 8, padR = 78, padT = 12, padB = 22;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+
+  let lo = Infinity, hi = -Infinity;
+  for (const k of arr) {
+    if (k.l < lo) lo = k.l;
+    if (k.h > hi) hi = k.h;
+  }
+  /* 强平价常常离现价很远（20 倍杠杆就在 5% 外），
+     硬塞进坐标会把 K 线压成一条线，所以只在靠近可视范围时才纳入 */
+  const p0 = ACC.pos.find(function (x) { return x.sym === FUT.sym; });
+  const lqLine = p0 ? liqOf(p0) : 0;
+  const span0 = (hi - lo) || hi * 0.001;
+  const inView = function (v) {
+    return v > 0 && v > lo - span0 * 2.5 && v < hi + span0 * 2.5;
+  };
+  const showLiq = inView(lqLine);
+  const showEntry = p0 && inView(p0.entry);
+  if (showLiq) { lo = Math.min(lo, lqLine); hi = Math.max(hi, lqLine); }
+  if (showEntry) { lo = Math.min(lo, p0.entry); hi = Math.max(hi, p0.entry); }
+  const pad = (hi - lo) * 0.09 || hi * 0.001;
+  lo -= pad; hi += pad;
+
+  const cw = plotW / N;
+  const Y = function (v) { return padT + (hi - v) / (hi - lo) * plotH; };
+
+  /* 网格 */
+  ctx.strokeStyle = 'rgba(255,255,255,.045)';
+  ctx.lineWidth = 1;
+  for (let i = 1; i < 4; i++) {
+    const yy = padT + plotH * i / 4;
+    ctx.beginPath(); ctx.moveTo(padL, yy); ctx.lineTo(padL + plotW, yy); ctx.stroke();
+  }
+
+  /* 蜡烛 */
+  for (let i = 0; i < arr.length; i++) {
+    const k = arr[i];
+    const x = padL + cw * (i + 0.5);
+    const up = k.c >= k.o;
+    const col = up ? '#16c784' : '#ff4d5e';
+    ctx.strokeStyle = col;
+    ctx.fillStyle = col;
+    ctx.beginPath();
+    ctx.moveTo(x, Y(k.h));
+    ctx.lineTo(x, Y(k.l));
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    const y1 = Y(Math.max(k.o, k.c)), y2 = Y(Math.min(k.o, k.c));
+    const bw = Math.max(1.2, cw * 0.62);
+    ctx.fillRect(x - bw / 2, y1, bw, Math.max(1, y2 - y1));
+  }
+
+  /* 标记价 */
+  const m = FUT.mark || FUT.last;
+  if (m > 0 && m >= lo && m <= hi) {
+    ctx.strokeStyle = 'rgba(240,185,11,.55)';
+    ctx.setLineDash([3, 4]);
+    ctx.beginPath(); ctx.moveTo(padL, Y(m)); ctx.lineTo(padL + plotW, Y(m)); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  /* 开仓价与强平价 */
+  if (p0) {
+    if (showEntry) {
+      ctx.strokeStyle = 'rgba(139,150,168,.55)';
+      ctx.setLineDash([2, 3]);
+      ctx.beginPath(); ctx.moveTo(padL, Y(p0.entry)); ctx.lineTo(padL + plotW, Y(p0.entry)); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    if (showLiq) {
+      ctx.strokeStyle = 'rgba(255,77,94,.6)';
+      ctx.setLineDash([5, 3]);
+      ctx.beginPath(); ctx.moveTo(padL, Y(lqLine)); ctx.lineTo(padL + plotW, Y(lqLine)); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  }
+
+  /* 右侧价格刻度 */
+  ctx.font = '10px ui-monospace, monospace';
+  ctx.textAlign = 'left';
+  ctx.fillStyle = 'rgba(139,150,168,.7)';
+  ctx.fillText(fmtPrice(hi - pad), padL + plotW + 6, padT + 4);
+  ctx.fillText(fmtPrice(lo + pad), padL + plotW + 6, padT + plotH);
+  if (m > 0) {
+    ctx.fillStyle = 'rgba(240,185,11,.9)';
+    ctx.fillText(fmtPrice(m), padL + plotW + 6, clamp(Y(m), padT + 9, padT + plotH - 2));
+  }
+  if (p0 && showLiq) {
+    ctx.fillStyle = 'rgba(255,77,94,.85)';
+    ctx.fillText(fmtPrice(lqLine), padL + plotW + 6, clamp(Y(lqLine), padT + 9, padT + plotH - 2));
+  }
+
+  /* 时间轴 */
+  ctx.fillStyle = 'rgba(139,150,168,.5)';
+  ctx.textAlign = 'left';
+  ctx.fillText(hhmm(arr[0].t), padL, H - 6);
+  ctx.textAlign = 'right';
+  ctx.fillText(hhmm(arr[arr.length - 1].t), padL + plotW, H - 6);
+}
+
+/* ---------- 网格 ---------- */
+function gridStart() {
+  const low = parseFloat($('#gdLow').value);
+  const high = parseFloat($('#gdHigh').value);
+  const n = parseInt($('#gdN').value, 10);
+  const qty = parseFloat($('#gdQty').value);
+  const m = FUT.mark || FUT.last;
+  if (!(low > 0 && high > low && n >= 2 && qty > 0)) { pfHint(t('perp.gErr'), true); return; }
+  if (!(m > low && m < high)) { pfHint(t('perp.gRange'), true); return; }
+  if (ACC.grid) { pfHint(t('perp.gBusy'), true); return; }
+
+  ACC.grid = { low: low, high: high, n: n, qty: qty, sym: FUT.sym, filled: 0 };
+  const step = (high - low) / (n - 1);
+  for (let i = 0; i < n; i++) {
+    const price = low + step * i;
+    const side = price < m ? 'buy' : 'sell';
+    placeOrder(side, 'limit', price, qty, { grid: true, level: i });
+  }
+  pfHint(t('perp.gOn', n));
+  pfRender();
+}
+
+function gridStop() {
+  if (!ACC.grid) return;
+  for (let i = ACC.ord.length - 1; i >= 0; i--) {
+    if (ACC.ord[i].grid) ACC.ord.splice(i, 1);
+  }
+  ACC.grid = null;
+  accSave();
+  pfRender();
+  pfHint(t('perp.gOff'));
+}
+
+function gridAfterFill(o, px) {
+  const g = ACC.grid;
+  if (!g) return;
+  const step = (g.high - g.low) / (g.n - 1);
+  const next = o.side === 'buy' ? o.level + 1 : o.level - 1;
+  g.filled++;
+  if (next < 0 || next >= g.n) return;
+  placeOrder(o.side === 'buy' ? 'sell' : 'buy', 'limit', g.low + step * next, g.qty,
+    { grid: true, level: next });
+}
+
+function pfGridRender() {
+  const el = $('#gdState');
+  if (!el) return;
+  if (!ACC.grid) { el.textContent = t('perp.gIdle'); return; }
+  const g = ACC.grid;
+  const open = ACC.ord.filter(function (o) { return o.grid; }).length;
+  el.innerHTML = t('perp.gRun', g.sym) + ' · ' + t('perp.gFilled') + ' <b>' + g.filled + '</b>'
+    + ' · ' + t('perp.gOpen') + ' <b>' + open + '</b>'
+    + ' · ' + t('perp.gRangeTxt') + ' <b>' + fmtPrice(g.low) + ' – ' + fmtPrice(g.high) + '</b>';
+}
+
+/* ---------- TWAP ---------- */
+function twapStart() {
+  const qty = parseFloat($('#twQty').value);
+  const mins = parseFloat($('#twMin').value);
+  const slices = parseInt($('#twSlice').value, 10);
+  if (!(qty > 0 && mins > 0 && slices >= 2)) { pfHint(t('perp.tErr'), true); return; }
+  if (ACC.twap) { pfHint(t('perp.tBusy'), true); return; }
+  const side = document.querySelector('#twSide button.on').dataset.s;
+  ACC.twap = {
+    sym: FUT.sym, side: side, qty: qty, slices: slices, done: 0,
+    gap: mins * 60000 / slices, nextAt: Date.now()
+  };
+  pfHint(t('perp.tOn'));
+  pfRender();
+}
+
+function twapStop() {
+  ACC.twap = null;
+  accSave();
+  pfRender();
+  pfHint(t('perp.tOff'));
+}
+
+function twapTick() {
+  const w = ACC.twap;
+  if (!w) return;
+  if (Date.now() < w.nextAt) return;
+  if (w.done >= w.slices) { ACC.twap = null; pfHint(t('perp.tDone')); pfRender(); return; }
+  const per = w.qty / w.slices;
+  applyFill(w.sym, (COINS.find(function (c) { return c.sym === w.sym; }) || COINS[0]).base,
+    w.side === 'long' ? 'buy' : 'sell', per, markOfSym(w.sym) || FUT.last, false, 'twap');
+  w.done++;
+  w.nextAt += w.gap;
+  pfRender();
+}
+
+function pfTwapRender() {
+  const el = $('#twState');
+  if (!el) return;
+  if (!ACC.twap) { el.textContent = t('perp.tIdle'); return; }
+  const w = ACC.twap;
+  const pct = (w.done / w.slices * 100).toFixed(0);
+  el.innerHTML = w.sym + ' · ' + (w.side === 'long' ? t('perp.long') : t('perp.short'))
+    + ' · ' + t('perp.tProg') + ' <b>' + w.done + '/' + w.slices + '</b> (' + pct + '%)'
+    + ' · ' + t('perp.tNext') + ' <b>' + Math.max(0, Math.ceil((w.nextAt - Date.now()) / 1000)) + 's</b>';
+}
+
+/* ---------- 主循环 ---------- */
+let pfLast = 0;
+
+/* 撮合、强平、资金费、TWAP 属于「账户侧」，离开页面也要继续跑，
+   否则切到别的页挂单就永远不会成交、持仓也不会被强平 */
+function pfEngine() {
+  checkOrders();
+  checkLiq();
+  settleFunding();
+  twapTick();
+  futPoll();
+}
+
+function pfTick() {
+  pfEngine();
+  const now = Date.now();
+  if (now - pfLast > 400) {
+    pfLast = now;
+    pfRender();
+    pfDrawChart();
+  }
+}
+
+/* ---------- 事件 ---------- */
+function pfBind() {
+  const r = $('#pfLev');
+  if (r) {
+    r.max = maxLevOf(FUT.base);
+    r.value = ACC.lev;
+    r.addEventListener('input', function () {
+      ACC.lev = +r.value;
+      $('#pfLevV').textContent = ACC.lev + 'x';
+      accSave();
+      pfInfo();
+    });
+  }
+
+  document.querySelectorAll('#pfMode button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      ACC.cross = b.dataset.m === 'cross';
+      document.querySelectorAll('#pfMode button').forEach(function (x) {
+        x.classList.toggle('on', x === b);
+      });
+      accSave();
+      pfRender();
+    });
+  });
+
+  document.querySelectorAll('#pfType button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      ACC.type = b.dataset.t;
+      document.querySelectorAll('#pfType button').forEach(function (x) {
+        x.classList.toggle('on', x === b);
+      });
+      const pe = $('#pfPrice');
+      pe.disabled = ACC.type === 'market';
+      if (ACC.type === 'market') pe.value = '';
+      else if (!pe.value && FUT.mark) pe.value = FUT.mark.toFixed(2);
+    });
+  });
+
+  document.querySelectorAll('#twSide button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.querySelectorAll('#twSide button').forEach(function (x) {
+        x.classList.toggle('on', x === b);
+      });
+    });
+  });
+
+  const pct = $('#pfPct');
+  if (pct) {
+    pct.addEventListener('input', function () {
+      const m = FUT.mark || FUT.last;
+      if (!m) return;
+      const maxQty = availBal() * ACC.lev / m;
+      $('#pfQty').value = (maxQty * (+pct.value) / 100).toFixed(4);
+      pfInfo();
+    });
+  }
+
+  ['#pfQty', '#pfPrice'].forEach(function (sel) {
+    const el = $(sel);
+    if (el) el.addEventListener('input', pfInfo);
+  });
+
+  $('#pfLong').addEventListener('click', function () { pfSubmit('buy'); });
+  $('#pfShort').addEventListener('click', function () { pfSubmit('sell'); });
+
+  $('#pfTabs').addEventListener('click', function (e) {
+    const b = e.target.closest('button');
+    if (!b) return;
+    ACC.pane = b.dataset.p;
+    document.querySelectorAll('#pfTabs button').forEach(function (x) {
+      x.classList.toggle('on', x === b);
+    });
+    document.querySelectorAll('.pf-pane').forEach(function (x) {
+      x.hidden = x.dataset.p !== ACC.pane;
+    });
+  });
+
+  /* 平仓 / 撤单 */
+  $('#pfPosBody').addEventListener('click', function (e) {
+    const b = e.target.closest('[data-close]');
+    if (!b) return;
+    closePos(b.dataset.close, 1);
+    pfHint(t('perp.closed'));
+  });
+  $('#pfOrdBody').addEventListener('click', function (e) {
+    const b = e.target.closest('[data-cancel]');
+    if (!b) return;
+    const id = +b.dataset.cancel;
+    const i = ACC.ord.findIndex(function (o) { return o.id === id; });
+    if (i >= 0) ACC.ord.splice(i, 1);
+    accSave();
+    pfRender();
+  });
+
+  $('#gdStart').addEventListener('click', gridStart);
+  $('#gdStop').addEventListener('click', gridStop);
+  $('#twStart').addEventListener('click', twapStart);
+  $('#twStop').addEventListener('click', twapStop);
+
+  $('#pfReset').addEventListener('click', function () {
+    if (!confirm(t('perp.resetConfirm'))) return;
+    ACC.wallet = 10000; ACC.pos = []; ACC.ord = []; ACC.fill = [];
+    ACC.realized = 0; ACC.fees = 0; ACC.funding = 0;
+    ACC.grid = null; ACC.twap = null;
+    accSave();
+    pfRender();
+    pfHint(t('perp.resetDone'));
+  });
+
+  /* 初始值 */
+  $('#pfLevV').textContent = ACC.lev + 'x';
+  document.querySelectorAll('#pfMode button').forEach(function (x) {
+    x.classList.toggle('on', (x.dataset.m === 'cross') === ACC.cross);
+  });
+  const pe = $('#pfPrice');
+  if (pe) pe.disabled = ACC.type === 'market';
+}
+
+function pfSubmit(side) {
+  const qty = pfQty();
+  if (!(qty > 0)) { pfHint(t('perp.eQty'), true); return; }
+  const type = ACC.type;
+  let price = 0;
+  if (type !== 'market') {
+    price = pfPrice();
+    if (!(price > 0)) { pfHint(t('perp.ePrice'), true); return; }
+  }
+  const r = placeOrder(side, type, price, qty, {});
+  if (r.err) { pfHint(r.err, true); return; }
+  pfHint(type === 'market'
+    ? t('perp.okMarket', qf(qty))
+    : t('perp.okLimit', qf(qty), fmtPrice(price)));
+}
+
+/* 首次进入合约页才拉数据，避免没用到的用户白跑流量 */
+function futInit() {
+  if (FUT.init) return;
+  FUT.init = true;
+  FUT.sym = S.symbol;
+  FUT.base = S.base;
+  accLoad();
+  pfBind();
+  futLoad();
+  futConnect();
+}
+
 function switchPage(p) {
   curPage = p;
 
@@ -4440,6 +6041,8 @@ function switchPage(p) {
 
   /* 买涨跌需要明确的到期区间，切过去时自动进区间模式 */
   if (p === 'trade' && !bucketMode) switchPeriod('B');
+  /* 合约页首次进入才连行情，没打开过就不白跑流量 */
+  if (p === 'perp') futInit();
 
   try { localStorage.setItem('btc-pred-page', p); } catch (e) {}
 
@@ -4454,6 +6057,9 @@ function switchPage(p) {
       drawSimChart();
     } else if (p === 'house') {
       botRender();
+    } else if (p === 'perp') {
+      pfRender();
+      pfDrawChart();
     }
   });
 }
@@ -4515,6 +6121,7 @@ async function switchCoin(sym) {
   SIM.mid = null;
   BOTS.round = null;
   SPIKE.hits = {}; SPIKE.start = 0; SPIKE.strike = null; SPIKE.cur = null;
+  futSwitch(sym);
   wsIdx = 0; wsRetry = 0;
 
   loadStats();

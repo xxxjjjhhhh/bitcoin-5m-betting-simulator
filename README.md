@@ -36,13 +36,14 @@
 
 不是让你照着它去交易，而是让你亲眼看到为什么大多数人在这种产品里是亏的。
 
-### 三个页面
+### 四个页面
 
 | 页面 | 内容 |
 |---|---|
 | **行情** | K 线图（7 档周期）+ 预测面板 + 8 因子拆解 + 自动结算统计 |
 | **买涨跌** | 二元合约模拟盘：实时价格曲线、结算倒计时、买涨/买跌/**插针**、赔率与期望值、庄家账本 |
 | **庄家** | 庄家模拟器：10/50/100 个虚拟散户、行为偏差模型、情绪系统、返水与暗箱、历史回放 |
+| **合约** | 永续合约终端：1–125x 杠杆、全仓/逐仓、市价限价止损、强平、资金费、网格、TWAP |
 
 ### 为什么好玩
 
@@ -64,6 +65,29 @@
 - **触发即收盘**：事件已经发生就不能再买，否则是白送钱。
 - **立即判断**：随时点一下，用当前区间的量能、回吐、针尖距 15m 支撑的距离、1h 趋势给出四档结论（激进接针 / 等待二次确认 / 严禁接针 / 暂无插针）。
 - **复制给 AI**：把上面这些真实数据填进一份完整的分析提示词，一键复制，粘给任意大模型继续深挖。
+
+### 永续合约
+
+「合约」页是一个完整的永续合约终端。
+
+**行情（真实数据）**：标记价、指数价、基差、资金费率与结算倒计时、持仓量、多空账户比、1 分钟 K 线、全市场爆仓流，全部来自币安合约公开接口。
+
+**账户（本地模拟）**：纯静态页面没有后端也没有密钥，下单不会真的送到交易所。但保证金、强平、资金费、手续费全部按币安规则算：
+
+| 项目 | 规则 |
+|---|---|
+| 维持保证金率 | BTC 0.4% / ETH 0.5% / 其它 1% |
+| 最大杠杆 | BTC 125x / ETH 100x / SOL·BNB·XRP 75x / 其它 50x |
+| 手续费 | taker 0.05% / maker 0.02% |
+| 资金费 | 取真实费率，演示中每分钟按 1/480 结算 |
+
+**逐仓强平价** = `开仓价 × (1 ∓ 1/杠杆) / (1 ∓ 维持保证金率)`，实测与理论值误差为 0。逐仓爆仓最多亏掉该仓位的保证金，全仓则用整个账户兜底。
+
+**订单**：市价 / 限价 / 止损，支持只减仓与 GTC/IOC/FOK/POST_ONLY。委托在离开合约页后仍会继续撮合。
+
+**网格**：给定上下界和格数，在区间内均匀挂单，成交后自动在相邻格反向补单。
+
+**TWAP**：把大单拆成 N 片，按时间匀速执行。
 
 ### 能玩出什么
 
@@ -120,6 +144,7 @@ It is not meant to be traded on. It is meant to show you, first-hand, why most p
 | **Market** | Candlestick chart (7 timeframes) + prediction panel + 8-factor breakdown + auto-settled stats |
 | **Trade** | Binary-contract paper trading: live price curve, settlement countdown, buy up/down/**wick**, odds & expected value, house ledger |
 | **House** | House simulator: 10/50/100 virtual retail players, behavioural-bias models, mood system, rebate & hidden skew, historical replay |
+| **Futures** | Perpetual terminal: 1–125x leverage, cross/isolated, market/limit/stop, liquidation, funding, grid, TWAP |
 
 ### Why it's fun
 
@@ -141,6 +166,29 @@ The Trade page has one more market: **bet on whether this 5-minute interval gets
 - **Closes on trigger**: once the wick happens the market shuts, otherwise buying at 0.99 would be free money.
 - **Judge now**: one click, any time, scores volume, retrace, distance from the tip to 15m support, and the 1h trend into one of four verdicts (catch it / wait for retest / do not catch / no wick yet).
 - **Copy for AI**: fills all of the above into a complete analysis prompt and copies it, ready to paste into any model.
+
+### Perpetual futures
+
+The Futures page is a full perpetual terminal.
+
+**Market data (real)**: mark price, index price, basis, funding rate and countdown, open interest, long/short account ratio, 1m candles, and the market-wide liquidation feed — all from Binance's public futures API.
+
+**Account (simulated locally)**: a static page has no backend and no keys, so orders never reach the exchange. Margin, liquidation, funding and fees are still computed by Binance's rules:
+
+| Item | Rule |
+|---|---|
+| Maintenance margin | BTC 0.4% / ETH 0.5% / others 1% |
+| Max leverage | BTC 125x / ETH 100x / SOL·BNB·XRP 75x / others 50x |
+| Fees | taker 0.05% / maker 0.02% |
+| Funding | real rate, settled at 1/480 per minute in the demo |
+
+**Isolated liquidation price** = `entry × (1 ∓ 1/leverage) / (1 ∓ maintenance rate)` — verified to match theory exactly. An isolated position can only lose its own margin; cross uses the whole account.
+
+**Orders**: market / limit / stop, with reduce-only and GTC/IOC/FOK/POST_ONLY. Resting orders keep matching after you leave the page.
+
+**Grid**: give it a range and a grid count, it quotes evenly and re-quotes the adjacent level after each fill.
+
+**TWAP**: slices a large order into N parts over time.
 
 ### Things you can discover
 
