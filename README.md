@@ -85,6 +85,10 @@
 
 **订单**：市价 / 限价 / 止损，支持只减仓与 GTC/IOC/FOK/POST_ONLY。委托在离开合约页后仍会继续撮合。
 
+**止盈止损**：开仓时可以直接带上，也可以事后在持仓行点「止盈止损」修改。触发价按标记价判断，触发后按市价平掉整个仓位。方向填反了会当场拦住，不会静默失败。
+
+**K 线周期**：1m / 5m / 15m / 1h / 4h / 1d 六档，切换后重拉对应周期的合约 K 线。
+
 **网格**：给定上下界和格数，在区间内均匀挂单，成交后自动在相邻格反向补单。
 
 **TWAP**：把大单拆成 N 片，按时间匀速执行。
@@ -185,6 +189,10 @@ The Futures page is a full perpetual terminal.
 **Isolated liquidation price** = `entry × (1 ∓ 1/leverage) / (1 ∓ maintenance rate)` — verified to match theory exactly. An isolated position can only lose its own margin; cross uses the whole account.
 
 **Orders**: market / limit / stop, with reduce-only and GTC/IOC/FOK/POST_ONLY. Resting orders keep matching after you leave the page.
+
+**TP / SL**: attach them when opening, or edit later from the position row. Triggers use the mark price and close the whole position at market. A wrong-side price is rejected on the spot instead of failing silently.
+
+**Timeframes**: 1m / 5m / 15m / 1h / 4h / 1d — switching reloads that interval's candles.
 
 **Grid**: give it a range and a grid count, it quotes evenly and re-quotes the adjacent level after each fill.
 

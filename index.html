@@ -325,9 +325,16 @@
 
   .pf-body{display:grid;grid-template-columns:minmax(0,1fr) 302px;gap:14px;padding:0 16px 10px}
   @media(max-width:1080px){.pf-body{grid-template-columns:1fr}}
-  .pf-chartwrap{border-radius:10px;overflow:hidden;background:rgba(255,255,255,.018);
+  .pf-chartwrap{position:relative;border-radius:10px;overflow:hidden;background:rgba(255,255,255,.018);
     border:1px solid rgba(255,255,255,.05)}
   #pfChart{display:block;width:100%;height:342px}
+  .pf-tf{position:absolute;top:8px;left:8px;z-index:2;display:flex;gap:2px;
+    background:rgba(10,12,17,.72);border:1px solid rgba(255,255,255,.07);
+    border-radius:7px;padding:2px;backdrop-filter:blur(4px)}
+  .pf-tf button{border:0;background:transparent;color:var(--dim2);font-family:inherit;
+    font-size:10px;padding:3px 7px;border-radius:5px;cursor:pointer;transition:.15s}
+  .pf-tf button.on{background:rgba(255,255,255,.13);color:var(--txt);font-weight:600}
+  .pf-tf button:hover{color:var(--txt)}
 
   .pf-panel{display:flex;flex-direction:column;gap:7px;font-size:11px}
   .pf-seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;
@@ -407,6 +414,31 @@
     border-radius:5px;padding:2px 7px;font-size:10px;font-family:inherit;cursor:pointer}
   .pf-mini-btn:hover{color:var(--gold);border-color:rgba(240,185,11,.4)}
   .pf-field input:disabled{opacity:.45}
+
+  .pf-check{display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--dim2);
+    cursor:pointer;user-select:none}
+  .pf-check input{accent-color:#f0b90b;width:12px;height:12px}
+  .pf-tsrow{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+  .pf-tpsl{font-size:10px;line-height:1.5;font-variant-numeric:tabular-nums}
+  .pf-tpsl i{font-style:normal;color:var(--dim2);margin-right:3px}
+  .pf-tpsl b{color:var(--gold);font-weight:600}
+  .pf-tpsl u{text-decoration:none;color:var(--down);font-weight:600}
+
+  .pf-modal{position:fixed;inset:0;z-index:200;background:rgba(5,7,11,.66);
+    display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+  .pf-modal[hidden]{display:none}
+  .pf-mbox{width:322px;background:#171c26;border:1px solid rgba(255,255,255,.1);
+    border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px;
+    box-shadow:0 18px 50px rgba(0,0,0,.55)}
+  .pf-mhead{display:flex;align-items:center;justify-content:space-between}
+  .pf-mhead b{font-size:12.5px;letter-spacing:.2px}
+  .pf-mhead button{background:transparent;border:0;color:var(--dim2);font-size:19px;
+    line-height:1;cursor:pointer;font-family:inherit;padding:0 2px}
+  .pf-mhead button:hover{color:var(--txt)}
+  .pf-mnote{font-size:10px;color:var(--dim2);line-height:1.5}
+  .pf-tsinfo{font-size:10px;color:var(--dim2);line-height:1.6;min-height:14px}
+  .pf-tsinfo.bad{color:var(--down)}
+  .pf-mbtn{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:2px}
   .sim-hint{font-size:10px;color:var(--dim2);margin-top:7px;line-height:1.6;min-height:16px}
   .sim-tbl{width:100%;border-collapse:collapse;font-size:11.5px;table-layout:fixed}
   .sim-tbl th{text-align:left;font-weight:500;color:var(--dim2);font-size:10px;padding:0 10px 7px;white-space:nowrap}
@@ -864,7 +896,17 @@
     </div>
 
     <div class="pf-body">
-      <div class="pf-chartwrap"><canvas id="pfChart"></canvas></div>
+      <div class="pf-chartwrap">
+        <div class="pf-tf" id="pfTf">
+          <button data-tf="1m" class="on">1m</button>
+          <button data-tf="5m">5m</button>
+          <button data-tf="15m">15m</button>
+          <button data-tf="1h">1h</button>
+          <button data-tf="4h">4h</button>
+          <button data-tf="1d">1d</button>
+        </div>
+        <canvas id="pfChart"></canvas>
+      </div>
 
       <div class="pf-panel">
         <div class="pf-seg" id="pfMode">
@@ -888,6 +930,15 @@
           <input id="pfPrice" type="number" step="0.1" placeholder="--"><span class="u">USDT</span></div>
         <div class="pf-field"><label data-i18n="perp.qty">数量</label>
           <input id="pfQty" type="number" step="0.001" placeholder="0"><span class="u" id="pfUnit">BTC</span></div>
+
+        <label class="pf-check"><input type="checkbox" id="pfTsOn">
+          <span data-i18n="perp.tpSl">止盈 / 止损</span></label>
+        <div class="pf-tsrow" id="pfTsRow" hidden>
+          <div class="pf-field"><label data-i18n="perp.tp">止盈</label>
+            <input id="pfTp" type="number" step="0.1" placeholder="--"></div>
+          <div class="pf-field"><label data-i18n="perp.sl">止损</label>
+            <input id="pfSl" type="number" step="0.1" placeholder="--"></div>
+        </div>
 
         <input type="range" id="pfPct" min="0" max="100" step="1" value="0" class="pf-pct">
 
@@ -926,7 +977,8 @@
           <th data-i18n="perp.thQty">数量</th><th data-i18n="perp.thEntry">开仓价</th>
           <th data-i18n="perp.thMark">标记价</th><th data-i18n="perp.thLiq">强平价</th>
           <th data-i18n="perp.thMargin">保证金</th><th data-i18n="perp.thRatio">保证金率</th>
-          <th data-i18n="perp.thPnl">未实现盈亏</th><th data-i18n="perp.thAct">操作</th>
+          <th data-i18n="perp.thPnl">未实现盈亏</th><th data-i18n="perp.thTpSl">止盈 / 止损</th>
+          <th data-i18n="perp.thAct">操作</th>
         </tr></thead>
         <tbody id="pfPosBody"></tbody>
       </table>
@@ -1006,6 +1058,26 @@
           <button class="pf-stop" id="twStop" data-i18n="perp.tStop">停止</button>
         </div>
         <div class="pf-gstate" id="twState"></div>
+      </div>
+    </div>
+
+    <!-- 持仓止盈止损 -->
+    <div class="pf-modal" id="pfTsModal" hidden>
+      <div class="pf-mbox">
+        <div class="pf-mhead">
+          <b id="tsTitle" data-i18n="perp.tpSlTitle">止盈止损</b>
+          <button id="tsX">×</button>
+        </div>
+        <div class="pf-mnote" id="tsNote"></div>
+        <div class="pf-field"><label data-i18n="perp.tp">止盈</label>
+          <input id="tsTp" type="number" step="0.1" placeholder="--"><span class="u">USDT</span></div>
+        <div class="pf-field"><label data-i18n="perp.sl">止损</label>
+          <input id="tsSl" type="number" step="0.1" placeholder="--"><span class="u">USDT</span></div>
+        <div class="pf-tsinfo" id="tsInfo"></div>
+        <div class="pf-mbtn">
+          <button class="pf-go" id="tsOk" data-i18n="perp.tsOk">确定</button>
+          <button class="pf-stop" id="tsClear" data-i18n="perp.tsClear">清除</button>
+        </div>
       </div>
     </div>
   </section>
@@ -1296,6 +1368,25 @@ const DICT = {
   'perp.closed':    ['已平仓', 'Closed', '決済済み', '청산 완료', 'Закрыто'],
   'perp.cancel':    ['撤单', 'Cancel', '取消', '취소', 'Отмена'],
   'perp.reduce':    ['只减仓', 'Reduce', '縮小のみ', '축소 전용', 'Только сокращ.'],
+  'perp.tpSl':      ['止盈 / 止损', 'TP / SL', '利確 / 損切', '익절 / 손절', 'TP / SL'],
+  'perp.tp':        ['止盈', 'Take profit', '利確', '익절', 'Тейк'],
+  'perp.sl':        ['止损', 'Stop loss', '損切', '손절', 'Стоп'],
+  'perp.thTpSl':    ['止盈 / 止损', 'TP / SL', '利確/損切', '익절/손절', 'TP / SL'],
+  'perp.tpSlBtn':   ['止盈止损', 'TP/SL', '利確損切', '익절손절', 'TP/SL'],
+  'perp.tpSlTitle': ['持仓止盈止损', 'Position TP / SL', '建玉の利確・損切', '포지션 익절/손절', 'TP / SL позиции'],
+  'perp.tsNote':    ['触发价按标记价判断，当前 {0}', 'Triggers on mark price, now {0}',
+                     'マーク価格で判定（現在 {0}）', '마크 가격 기준 (현재 {0})', 'Триггер по марк-цене, сейчас {0}'],
+  'perp.tsOk':      ['确定', 'Confirm', '確定', '확인', 'OK'],
+  'perp.tsClear':   ['清除', 'Clear', '解除', '해제', 'Сброс'],
+  'perp.tsSaved':   ['止盈止损已更新', 'TP/SL updated', '利確・損切を更新', '익절/손절 갱신', 'TP/SL обновлены'],
+  'perp.tpBad':     ['止盈价方向不对：多单要高于 {0}，空单要低于',
+                     'Wrong TP side: above {0} for longs, below for shorts',
+                     '利確価格が逆です（ロングは {0} 超）', '익절가 방향 오류 ({0} 기준)', 'Неверная сторона TP'],
+  'perp.slBad':     ['止损价方向不对：多单要低于 {0}，空单要高于',
+                     'Wrong SL side: below {0} for longs, above for shorts',
+                     '損切価格が逆です（ロングは {0} 未満）', '손절가 방향 오류 ({0} 기준)', 'Неверная сторона SL'],
+  'perp.tpHit':     ['{0} 触发止盈 {1}', '{0} take-profit hit at {1}', '{0} 利確 {1}', '{0} 익절 {1}', '{0} тейк {1}'],
+  'perp.slHit':     ['{0} 触发止损 {1}', '{0} stop-loss hit at {1}', '{0} 損切 {1}', '{0} 손절 {1}', '{0} стоп {1}'],
   'perp.mode':      ['模式', 'Mode', 'モード', '모드', 'Режим'],
   'perp.wallet':    ['钱包余额', 'Wallet', 'ウォレット', '지갑 잔고', 'Кошелёк'],
   'perp.upl':       ['未实现盈亏', 'Unrealized', '含み損益', '미실현 손익', 'Нереализ. P&L'],
@@ -4839,7 +4930,8 @@ const FUT = {
   oi: 0, oiPrev: 0,
   ls: null,                        // 多空账户比
   day: { o: 0, h: 0, l: 0, q: 0, chg: 0 },
-  klines: [],                      // 1m
+  tf: '1m',                        // K 线周期
+  klines: [],
   marks: {},                       // sym -> 最新标记价
   liq: [],                         // 爆仓流
   ws: null, retry: 0, alive: false,
@@ -4903,14 +4995,16 @@ async function futGet(path) {
 
 async function futLoad() {
   const sym = FUT.sym;
+  const tf = FUT.tf;
   try {
     const r = await Promise.all([
-      futGet('/fapi/v1/klines?symbol=' + sym + '&interval=1m&limit=120'),
+      futGet('/fapi/v1/klines?symbol=' + sym + '&interval=' + tf + '&limit=120'),
       futGet('/fapi/v1/premiumIndex?symbol=' + sym),
       futGet('/fapi/v1/openInterest?symbol=' + sym),
       futGet('/fapi/v1/ticker/24hr?symbol=' + sym)
     ]);
-    if (FUT.sym !== sym) return;
+    /* 期间可能切了币种或周期，晚到的响应直接丢掉 */
+    if (FUT.sym !== sym || FUT.tf !== tf) return;
     FUT.klines = r[0].map(function (k) {
       return { t: +k[0], o: +k[1], h: +k[2], l: +k[3], c: +k[4], v: +k[5] };
     });
@@ -4966,7 +5060,7 @@ async function futPoll() {
   if (silent && now - FUT.klineAt > 10000) {
     FUT.klineAt = now;
     try {
-      const kl = await futGet('/fapi/v1/klines?symbol=' + FUT.sym + '&interval=1m&limit=120');
+      const kl = await futGet('/fapi/v1/klines?symbol=' + FUT.sym + '&interval=' + FUT.tf + '&limit=120');
       if (FUT.sym === sym) {
         FUT.klines = kl.map(function (k) {
           return { t: +k[0], o: +k[1], h: +k[2], l: +k[3], c: +k[4], v: +k[5] };
@@ -4999,7 +5093,7 @@ async function futPoll() {
 function futConnect() {
   if (FUT.ws) { try { FUT.ws.close(); } catch (e) {} }
   const s = FUT.sym.toLowerCase();
-  const streams = [s + '@markPrice@1s', s + '@aggTrade', s + '@kline_1m', '!forceOrder@arr'].join('/');
+  const streams = [s + '@markPrice@1s', s + '@aggTrade', s + '@kline_' + FUT.tf, '!forceOrder@arr'].join('/');
   let ws;
   try { ws = new WebSocket(FUT_WSS + streams); } catch (e) { return; }
   FUT.ws = ws;
@@ -5071,6 +5165,20 @@ function futSwitch(sym) {
   const r = $('#pfLev');
   if (r) { r.max = maxLevOf(FUT.base); r.value = ACC.lev; }
   if (FUT.init) { futLoad(); futConnect(); }
+  pfRender();
+}
+
+/* 切换 K 线周期：重拉该周期的 K 线，并换掉 WS 的 kline 订阅 */
+function futSetTf(tf) {
+  if (FUT.tf === tf) return;
+  FUT.tf = tf;
+  FUT.klines = [];
+  FUT.ready = false;
+  document.querySelectorAll('#pfTf button').forEach(function (b) {
+    b.classList.toggle('on', b.dataset.tf === tf);
+  });
+  futLoad();
+  if (FUT.init) futConnect();
   pfRender();
 }
 
@@ -5259,6 +5367,7 @@ function placeOrder(side, type, price, qty, opts) {
     side: side, type: type, price: price, qty: qty,
     reduceOnly: !!opts.reduceOnly, tif: tif,
     grid: !!opts.grid, level: opts.level,
+    tp: opts.tp || null, sl: opts.sl || null,
     status: 'open'
   });
   if (ACC.ord.length > 80) ACC.ord.length = 80;
@@ -5297,8 +5406,45 @@ function checkOrders() {
     o.status = 'done';
     ACC.ord.splice(i, 1);
 
+    /* 限价单开仓时带的止盈止损，成交后挂到仓位上 */
+    if (r && (o.tp || o.sl)) {
+      const np = ACC.pos.find(function (x) { return x.sym === o.sym; });
+      if (np) {
+        if (o.tp) np.tp = o.tp;
+        if (o.sl) np.sl = o.sl;
+        accSave();
+      }
+    }
+
     if (o.grid && ACC.grid && r) gridAfterFill(o, px);
   }
+}
+
+/* ---------- 止盈 / 止损 ----------
+ * 触发价按标记价判断（和币安一致），触发后按市价平掉整个仓位。
+ * 多头：止盈在上、止损在下；空头反过来。
+ */
+function checkTpSl() {
+  if (!ACC.pos.length) return;
+  for (let i = ACC.pos.length - 1; i >= 0; i--) {
+    const p = ACC.pos[i];
+    if (!p.tp && !p.sl) continue;
+    const m = markOf(p);
+    if (!m) continue;
+    const long = p.side === 'long';
+    let tag = null;
+    if (p.tp && (long ? m >= p.tp : m <= p.tp)) tag = 'tp';
+    else if (p.sl && (long ? m <= p.sl : m >= p.sl)) tag = 'sl';
+    if (!tag) continue;
+    closePos(p.sym, 1, tag);
+    pfHint(t(tag === 'tp' ? 'perp.tpHit' : 'perp.slHit', p.sym, fmtPrice(m)), tag === 'sl');
+  }
+}
+
+function tpslCheck(side, ref, tp, sl) {
+  if (tp && (side === 'buy' ? tp <= ref : tp >= ref)) return 'perp.tpBad';
+  if (sl && (side === 'buy' ? sl >= ref : sl <= ref)) return 'perp.slBad';
+  return null;
 }
 
 /* ---------- 强平 ---------- */
@@ -5498,7 +5644,14 @@ function pfPositions() {
       + '<td class="' + (ratio >= 0.8 ? 'neg' : ratio >= 0.5 ? '' : 'pos') + '">'
         + (ratio * 100).toFixed(1) + '%</td>'
       + '<td class="' + (u >= 0 ? 'pos' : 'neg') + '">' + (u >= 0 ? '+' : '') + usd(u) + '</td>'
-      + '<td><button class="pf-mini-btn" data-close="' + p.sym + '">' + t('perp.close') + '</button></td>'
+      + '<td class="pf-tpsl">'
+        + (p.tp ? '<i>TP</i><b>' + fmtPrice(p.tp) + '</b>' : '')
+        + (p.tp && p.sl ? '<br>' : '')
+        + (p.sl ? '<i>SL</i><u>' + fmtPrice(p.sl) + '</u>' : '')
+        + (!p.tp && !p.sl ? '—' : '')
+      + '</td>'
+      + '<td><button class="pf-mini-btn" data-tpsl="' + p.sym + '">' + t('perp.tpSlBtn') + '</button>'
+        + '<button class="pf-mini-btn" data-close="' + p.sym + '">' + t('perp.close') + '</button></td>'
       + '</tr>';
   }
   body.innerHTML = html;
@@ -5544,13 +5697,15 @@ function pfFills() {
   empty.style.display = 'none';
   let html = '';
   for (const f of ACC.fill.slice(0, 30)) {
-    const liq = f.tag === 'liq';
+    const tagMap = { liq: 'perp.liqTag', tp: 'perp.tp', sl: 'perp.sl' };
+    const tagCls = f.tag === 'liq' ? 'miss' : f.tag === 'tp' ? 'hit' : f.tag === 'sl' ? 'flat' : '';
+    const tagTxt = tagMap[f.tag] ? t(tagMap[f.tag]) : '';
     html += '<tr>'
       + '<td>' + hhmm(f.ts) + '</td>'
       + '<td class="b">' + f.sym + '</td>'
       + '<td><span class="tag ' + (f.dir === 'buy' ? 'up' : 'down') + '">'
         + (f.dir === 'buy' ? t('perp.buy') : t('perp.sell')) + '</span>'
-        + (liq ? ' <span class="tag miss">' + t('perp.liqTag') + '</span>' : '') + '</td>'
+        + (tagTxt ? ' <span class="tag ' + tagCls + '">' + tagTxt + '</span>' : '') + '</td>'
       + '<td>' + fmtPrice(f.price) + '</td>'
       + '<td>' + qf(f.qty) + '</td>'
       + '<td>' + f.fee.toFixed(3) + '</td>'
@@ -5751,11 +5906,19 @@ function pfDrawChart() {
   }
 
   /* 时间轴 */
+  /* 时间轴：周期越大越需要带日期，否则 1h 以上光看时分分不清是哪天 */
+  const lbl = function (ts) {
+    const d = new Date(ts);
+    const md = (d.getMonth() + 1) + '/' + d.getDate();
+    if (FUT.tf === '1d') return md;
+    if (FUT.tf === '4h' || FUT.tf === '1h') return md + ' ' + pad2(d.getHours()) + ':00';
+    return pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+  };
   ctx.fillStyle = 'rgba(139,150,168,.5)';
   ctx.textAlign = 'left';
-  ctx.fillText(hhmm(arr[0].t), padL, H - 6);
+  ctx.fillText(lbl(arr[0].t), padL, H - 6);
   ctx.textAlign = 'right';
-  ctx.fillText(hhmm(arr[arr.length - 1].t), padL + plotW, H - 6);
+  ctx.fillText(lbl(arr[arr.length - 1].t), padL + plotW, H - 6);
 }
 
 /* ---------- 网格 ---------- */
@@ -5867,6 +6030,7 @@ let pfLast = 0;
    否则切到别的页挂单就永远不会成交、持仓也不会被强平 */
 function pfEngine() {
   checkOrders();
+  checkTpSl();
   checkLiq();
   settleFunding();
   twapTick();
@@ -5881,6 +6045,49 @@ function pfTick() {
     pfRender();
     pfDrawChart();
   }
+}
+
+/* ---------- 持仓止盈止损弹窗 ---------- */
+let tsSym = null;
+
+function openTpSl(sym) {
+  const p = ACC.pos.find(function (x) { return x.sym === sym; });
+  if (!p) return;
+  tsSym = sym;
+  $('#tsTitle').textContent = sym + ' · ' + (p.side === 'long' ? t('perp.long') : t('perp.short'))
+    + ' ' + qf(p.qty) + ' @ ' + fmtPrice(p.entry);
+  $('#tsTp').value = p.tp || '';
+  $('#tsSl').value = p.sl || '';
+  $('#tsNote').textContent = t('perp.tsNote', fmtPrice(markOf(p)));
+  $('#tsInfo').textContent = '';
+  $('#tsInfo').className = 'pf-tsinfo';
+  $('#pfTsModal').hidden = false;
+}
+
+function closeTpSl() {
+  const el = $('#pfTsModal');
+  if (el) el.hidden = true;
+  tsSym = null;
+}
+
+function saveTpSl() {
+  const p = ACC.pos.find(function (x) { return x.sym === tsSym; });
+  if (!p) { closeTpSl(); return; }
+  const tp = parseFloat($('#tsTp').value) || 0;
+  const sl = parseFloat($('#tsSl').value) || 0;
+  const ref = markOf(p) || p.entry;
+  const err = tpslCheck(p.side === 'long' ? 'buy' : 'sell', ref, tp, sl);
+  if (err) {
+    $('#tsInfo').className = 'pf-tsinfo bad';
+    $('#tsInfo').textContent = t(err, fmtPrice(ref));
+    return;
+  }
+  p.tp = tp || null;
+  p.sl = sl || null;
+  accSave();
+  pfRender();
+  closeTpSl();
+  pfHint(t('perp.tsSaved'));
 }
 
 /* ---------- 事件 ---------- */
@@ -5960,8 +6167,10 @@ function pfBind() {
     });
   });
 
-  /* 平仓 / 撤单 */
+  /* 平仓 / 撤单 / 止盈止损 */
   $('#pfPosBody').addEventListener('click', function (e) {
+    const ts = e.target.closest('[data-tpsl]');
+    if (ts) { openTpSl(ts.dataset.tpsl); return; }
     const b = e.target.closest('[data-close]');
     if (!b) return;
     closePos(b.dataset.close, 1);
@@ -5981,6 +6190,31 @@ function pfBind() {
   $('#gdStop').addEventListener('click', gridStop);
   $('#twStart').addEventListener('click', twapStart);
   $('#twStop').addEventListener('click', twapStop);
+
+  /* K 线周期 */
+  document.querySelectorAll('#pfTf button').forEach(function (b) {
+    b.addEventListener('click', function () { futSetTf(b.dataset.tf); });
+  });
+
+  /* 开仓时预设止盈止损 */
+  const tsOn = $('#pfTsOn');
+  if (tsOn) {
+    tsOn.addEventListener('change', function () {
+      $('#pfTsRow').hidden = !tsOn.checked;
+    });
+  }
+
+  /* 持仓止盈止损弹窗 */
+  $('#tsX').addEventListener('click', closeTpSl);
+  $('#tsOk').addEventListener('click', saveTpSl);
+  $('#tsClear').addEventListener('click', function () {
+    const p = ACC.pos.find(function (x) { return x.sym === tsSym; });
+    if (p) { p.tp = null; p.sl = null; accSave(); pfRender(); }
+    closeTpSl();
+  });
+  $('#pfTsModal').addEventListener('click', function (e) {
+    if (e.target.id === 'pfTsModal') closeTpSl();
+  });
 
   $('#pfReset').addEventListener('click', function () {
     if (!confirm(t('perp.resetConfirm'))) return;
@@ -6010,8 +6244,32 @@ function pfSubmit(side) {
     price = pfPrice();
     if (!(price > 0)) { pfHint(t('perp.ePrice'), true); return; }
   }
-  const r = placeOrder(side, type, price, qty, {});
+
+  /* 开仓时预设的止盈止损 */
+  const tsOn = $('#pfTsOn') && $('#pfTsOn').checked;
+  let tp = 0, sl = 0;
+  if (tsOn) {
+    tp = parseFloat($('#pfTp').value) || 0;
+    sl = parseFloat($('#pfSl').value) || 0;
+    const ref = type === 'market' ? (FUT.mark || FUT.last) : price;
+    const err = tpslCheck(side, ref, tp, sl);
+    if (err) { pfHint(t(err, fmtPrice(ref)), true); return; }
+  }
+
+  const r = placeOrder(side, type, price, qty, { tp: tp, sl: sl });
   if (r.err) { pfHint(r.err, true); return; }
+
+  /* 市价单当场成交，止盈止损直接挂到仓位上；限价单等成交后再挂 */
+  if (type === 'market' && (tp || sl)) {
+    const p = ACC.pos.find(function (x) { return x.sym === FUT.sym; });
+    if (p) {
+      if (tp) p.tp = tp;
+      if (sl) p.sl = sl;
+      accSave();
+      pfRender();
+    }
+  }
+
   pfHint(type === 'market'
     ? t('perp.okMarket', qf(qty))
     : t('perp.okLimit', qf(qty), fmtPrice(price)));
